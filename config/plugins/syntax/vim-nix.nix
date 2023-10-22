@@ -1,0 +1,3 @@
+{
+  plugins.nix.enable = true;
+}
