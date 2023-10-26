@@ -12,6 +12,7 @@
     ./terminal/toggleterm.nix
     ./git/gitsigns.nix
     ./git/diffview.nix
+    ./git/neogit.nix
     ./keybinding/which-key.nix
     ./syntax/treesitter.nix
     ./syntax/rainbow-delimiters.nix
