@@ -95,15 +95,15 @@
         };
         html = {
           enable = true;
-          installLanguageServer = false;
+          installLanguageServer = true;
         };
         cssls = {
           enable = true;
-          installLanguageServer = false;
+          installLanguageServer = true;
         };
         tsserver = {
           enable = true;
-          installLanguageServer = false;
+          installLanguageServer = true;
         };
       };
     };
