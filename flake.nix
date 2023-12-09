@@ -36,7 +36,7 @@
           _module.args.pkgs = import inputs.nixpkgs {
             inherit system;
             overlays = [
-              inputs.neovim-nightly-overlay.overlay
+              # inputs.neovim-nightly-overlay.overlay
               inputs.nixd.overlays.default
               # inputs.nil.overlays.default
             ];
