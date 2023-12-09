@@ -7,7 +7,10 @@
           nixpkgs_fmt.enable = true;
           beautysh.enable = true;
           rustfmt.enable = true;
-          prettier.enable = true;
+          prettier = {
+            disableTsServerFormatter = true;
+            enable = true;
+          };
           gofmt.enable = true;
           fourmolu.enable = true;
         };
