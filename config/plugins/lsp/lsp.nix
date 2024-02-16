@@ -48,15 +48,13 @@
       servers = {
         nixd = {
           enable = true;
-          installLanguageServer = true;
         };
         nil_ls = {
           enable = false;
-          installLanguageServer = false;
+          package = null;
         };
         gopls = {
           enable = true;
-          installLanguageServer = true;
           extraOptions = {
             settings = {
               experimentalPostfixCompletions = true;
@@ -73,37 +71,30 @@
         };
         rust-analyzer = {
           enable = true;
-          installLanguageServer = true;
           installCargo = true;
           installRustc = true;
         };
         bashls = {
           enable = true;
-          installLanguageServer = true;
         };
         clangd = {
           enable = true;
-          installLanguageServer = false;
+          package = null;
         };
         pyright = {
           enable = true;
-          installLanguageServer = false;
         };
         hls = {
           enable = true;
-          installLanguageServer = true;
         };
         html = {
           enable = true;
-          installLanguageServer = true;
         };
         cssls = {
           enable = true;
-          installLanguageServer = true;
         };
         tsserver = {
           enable = true;
-          installLanguageServer = true;
         };
       };
     };

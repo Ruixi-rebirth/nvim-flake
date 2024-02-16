@@ -6,6 +6,7 @@
         formatting = {
           nixpkgs_fmt.enable = true;
           beautysh.enable = true;
+          black.enable = true;
           rustfmt.enable = true;
           prettier = {
             disableTsServerFormatter = true;
