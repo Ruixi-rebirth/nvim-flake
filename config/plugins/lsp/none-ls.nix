@@ -5,15 +5,13 @@
       sources = {
         formatting = {
           nixpkgs_fmt.enable = true;
-          beautysh.enable = true;
+          shfmt.enable = true;
           black.enable = true;
-          rustfmt.enable = true;
           prettier = {
             disableTsServerFormatter = true;
             enable = true;
           };
           gofmt.enable = true;
-          fourmolu.enable = true;
         };
       };
       onAttach = ''

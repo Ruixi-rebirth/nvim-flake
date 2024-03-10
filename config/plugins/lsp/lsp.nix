@@ -1,6 +1,6 @@
 {
   config = {
-    plugins.nvim-cmp.enable = true;
+    plugins.cmp.enable = true;
     plugins.lsp = {
       enable = true;
       onAttach = ''
@@ -73,6 +73,9 @@
           enable = true;
           installCargo = true;
           installRustc = true;
+          onAttach.function = ''
+            vim.cmd [[autocmd BufWritePre <buffer> lua vim.lsp.buf.format()]]
+          '';
         };
         bashls = {
           enable = true;
@@ -86,6 +89,9 @@
         };
         hls = {
           enable = true;
+          onAttach.function = ''
+            vim.cmd [[autocmd BufWritePre <buffer> lua vim.lsp.buf.format()]]
+          '';
         };
         html = {
           enable = true;
