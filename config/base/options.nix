@@ -1,6 +1,6 @@
 {
   config = {
-    options = {
+    opts = {
       mouse = "a";
       undofile = true;
       ignorecase = true;
