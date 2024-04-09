@@ -154,6 +154,12 @@ with pkgs.vimPlugins; {
        capabilities = capabilities,
     })
 
+    nvim_lsp.volar.setup({
+       cmd = { "${pkgs.nodePackages.volar}/bin/vue-language-server", "--stdio" },
+       on_attach = on_attach_common(),
+       capabilities = capabilities,
+    })
+
     nvim_lsp.bashls.setup({
        cmd = { "${pkgs.nodePackages.bash-language-server}/bin/bash-language-server", "start" },
        on_attach = on_attach_common(),

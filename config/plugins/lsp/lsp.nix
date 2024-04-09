@@ -102,6 +102,9 @@
         tsserver = {
           enable = true;
         };
+        volar = {
+          enable = true;
+        };
       };
     };
     extraConfigLua = ''
