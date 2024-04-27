@@ -1,0 +1,30 @@
+name: "push_to_cachix"
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "0 0 * * 6"
+env:
+  CACHIX_CACHE_NAME: ruixi-rebirth
+jobs:
+  push_to_cachix:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      - name: Install nix
+        uses: cachix/install-nix-action@v27
+        with:
+          nix_path: nixpkgs=channel:nixos-unstable
+          extra_nix_config: |
+            experimental-features = nix-command flakes
+            access-tokens = github.com=${{ secrets.GITHUB_TOKEN }}
+      - name: Flake check
+        run: nix flake check --all-systems
+      - name: Setup cachix
+        uses: cachix/cachix-action@v15
+        with:
+          name: ${{ env.CACHIX_CACHE_NAME }}
+          signingKey: "${{ secrets.CACHIX_SIGNING_KEY }}"
+          authToken: "${{ secrets.CACHIX_AUTH_TOKEN }}"
+      - name: Push build results to Cachix
+        run: nix build --json | jq -r '.[].outputs | to_entries[].value' | cachix push $CACHIX_CACHE_NAME
