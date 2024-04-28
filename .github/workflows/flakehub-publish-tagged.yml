@@ -24,4 +24,4 @@ jobs:
         with:
           visibility: "public"
           name: "Ruixi-rebirth/nvim-flake"
-          tag: "${{ inputs.tag }}"
+          rolling: true
