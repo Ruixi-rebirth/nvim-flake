@@ -22,7 +22,7 @@
       imports = [
         ./pre-commit-hooks.nix
       ];
-      systems = ["x86_64-linux"];
+      systems = [ "x86_64-linux" ];
       perSystem = { pkgs, system, config, ... }:
         let
           nixvimLib = nixvim.lib.${system};
