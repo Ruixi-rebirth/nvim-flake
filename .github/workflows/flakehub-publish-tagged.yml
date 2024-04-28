@@ -3,12 +3,6 @@ on:
   push:
     tags:
       - "v?[0-9]+.[0-9]+.[0-9]+*"
-  workflow_dispatch:
-    inputs:
-      tag:
-        description: "The existing tag to publish to FlakeHub"
-        type: "string"
-        required: true
 jobs:
   flakehub-publish:
     runs-on: "ubuntu-latest"
