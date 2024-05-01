@@ -11,7 +11,7 @@
       autoindent = true;
       swapfile = true;
       hidden = true; # default on 
-      expandtab = true;
+      expandtab = false;
       cmdheight = 1;
       shiftwidth = 4; # insert 4 spaces for each indentation
       tabstop = 4; # insert 4 spaces for a tab
