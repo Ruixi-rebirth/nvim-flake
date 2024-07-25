@@ -85,7 +85,7 @@
     })
     --python
     nvim_lsp.pyright.setup({
-       cmd = { "${pkgs.vscode-extensions.ms-pyright.pyright}/bin/pyright-langserver", "--stdio" },
+       cmd = { "${pkgs.pyright}/bin/pyright-langserver", "--stdio" },
        on_attach = on_attach_common(),
        capabilities = capabilities,
        settings = {
@@ -149,19 +149,19 @@
     })
 
     nvim_lsp.tsserver.setup({
-       cmd = { "${pkgs.nodePackages.typescript-language-server}/bin/typescript-language-server", "--stdio" },
+       cmd = { "${pkgs.typescript-language-server}/bin/typescript-language-server", "--stdio" },
        on_attach = on_attach_common(),
        capabilities = capabilities,
     })
 
     nvim_lsp.volar.setup({
-       cmd = { "${pkgs.nodePackages.volar}/bin/vue-language-server", "--stdio" },
+       cmd = { "${pkgs.vue-language-server}/bin/vue-language-server", "--stdio" },
        on_attach = on_attach_common(),
        capabilities = capabilities,
     })
 
     nvim_lsp.bashls.setup({
-       cmd = { "${pkgs.nodePackages.bash-language-server}/bin/bash-language-server", "start" },
+       cmd = { "${pkgs.bash-language-server}/bin/bash-language-server", "start" },
        on_attach = on_attach_common(),
        capabilities = capabilities,
     })
