@@ -2,6 +2,9 @@
 {
   pkg = pkgs.vimPlugins.nvim-dap-ui;
   lazy = true;
+  dependencies = with pkgs.vimPlugins; [
+    nvim-nio
+  ];
   keys = helpers.mkRaw ''{
     { "<C-b>", "<cmd>lua require'dap'.toggle_breakpoint()<CR>", desc = "toggle_breakpoint" }
   }'';
