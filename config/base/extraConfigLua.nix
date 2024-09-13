@@ -21,6 +21,24 @@
           end
       end
       load_project_nvim_config()
+
+      local load_clipboard_config = function()
+          if vim.fn.has('wsl') == 1 then
+            vim.g.clipboard = {
+              name = 'WslClipboard',
+              copy = {
+                ['+'] = 'cb cp',
+                ['*'] = 'cb cp',
+              },
+              paste = {
+                ['+'] = 'cb p',
+                ['*'] = 'cb p',
+              },
+              cache_enabled = 0,
+            }
+          end
+      end
+      load_clipboard_config()
     '';
   };
 }
