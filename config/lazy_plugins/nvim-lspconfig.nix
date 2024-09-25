@@ -148,7 +148,7 @@
        capabilities = capabilities,
     })
 
-    nvim_lsp.tsserver.setup({
+    nvim_lsp.ts_ls.setup({
        cmd = { "${pkgs.typescript-language-server}/bin/typescript-language-server", "--stdio" },
        on_attach = on_attach_common(),
        capabilities = capabilities,
