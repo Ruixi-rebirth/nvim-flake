@@ -24,23 +24,24 @@
                 command = "${pkgs.shfmt}/bin/shfmt"
              }),
              require("null-ls").builtins.formatting.stylua.with({
-                command = "${pkgs.stylua}/bin/stylua"
+                command = "${pkgs.stylua}/bin/stylua",
+                extra_args = { "--indent-type", "Spaces", "--indent-width", "2" },
              }),
           },
 
           on_attach = function(client, bufnr)
-          if client.supports_method("textDocument/formatting") then
-             vim.api.nvim_clear_autocmds({ group = vim.api.nvim_create_augroup("LspFormatting", {}), buffer = bufnr })
-             vim.api.nvim_create_autocmd("BufWritePre", {
-                group = vim.api.nvim_create_augroup("LspFormatting", {}),
-                buffer = bufnr,
-                callback = function()
-                vim.lsp.buf.format({ async = false })
-                end,
-             })
+            if client.supports_method("textDocument/formatting") then
+               vim.api.nvim_clear_autocmds({ group = vim.api.nvim_create_augroup("LspFormatting", {}), buffer = bufnr })
+               vim.api.nvim_create_autocmd("BufWritePre", {
+                  group = vim.api.nvim_create_augroup("LspFormatting", {}),
+                  buffer = bufnr,
+                  callback = function()
+                  vim.lsp.buf.format({ async = false })
+                  end,
+               })
+            end
           end
-       end
-    })
+       })
     end
   '';
 }

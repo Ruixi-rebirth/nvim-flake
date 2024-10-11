@@ -1,8 +1,25 @@
 { pkgs, helpers, ... }:
 {
   pkg = pkgs.vimPlugins.trouble-nvim;
-  lazy = true;
   dependencies = with pkgs.vimPlugins; [ nvim-web-devicons ];
+  opts = helpers.mkRaw ''{
+    icons = {
+      indent = {
+        middle = " ",
+        last = " ",
+        top = " ",
+        ws = "│  "
+      },
+    },
+    modes = {
+      diagnostics = {
+        groups = {
+          { "filename", format = "{file_icon} {basename:Title} {count}" },
+        },
+      },
+    },
+  }'';
+  cmd = "Trouble";
   keys = helpers.mkRaw ''{
     { "<leader>xx", "<cmd>Trouble diagnostics toggle<cr>", desc = "Diagnostics (Trouble)" },
     { "<leader>xX", "<cmd>Trouble diagnostics toggle filter.buf=0<cr>", desc = "Buffer Diagnostics (Trouble)" },
