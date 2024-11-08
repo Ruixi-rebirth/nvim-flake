@@ -14,8 +14,8 @@
              require("null-ls").builtins.formatting.prettier.with({
                 command = "${pkgs.nodePackages.prettier}/bin/prettier"
              }),
-             require("null-ls").builtins.formatting.gofmt.with({
-                command = "${pkgs.go}/bin/gofmt"
+             require("null-ls").builtins.formatting.gofumpt.with({
+                command = "${pkgs.gofumpt}/bin/gofumpt"
              }),
              require("null-ls").builtins.formatting.nixpkgs_fmt.with({
                 command = "${pkgs.nixpkgs-fmt}/bin/nixpkgs-fmt",

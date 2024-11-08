@@ -33,7 +33,7 @@ let
     completion = "nvim-cmp";
     lsp = [
       "nvim-lspconfig"
-      "lspsaga-nvim"
+      # "lspsaga-nvim"
       "trouble-nvim"
       "none-ls-nvim"
     ];
