@@ -36,6 +36,7 @@ let
       # "lspsaga-nvim"
       "trouble-nvim"
       "none-ls-nvim"
+      # "LspUI-nvim"
     ];
     utils = [
       "undotree"
@@ -45,6 +46,7 @@ let
       "todo-comments-nvim"
       "markdown-preview-nvim"
       "comment-nvim"
+      "outline-nvim"
     ];
   };
   plugins = builtins.concatMap (cat: map importPlugin (if builtins.isList cat then cat else [ cat ])) (builtins.attrValues category);
