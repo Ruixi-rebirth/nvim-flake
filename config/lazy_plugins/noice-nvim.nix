@@ -20,6 +20,10 @@
                 opts = { skip = true },
              },
           },
+          presets = {
+            inc_rename = true, 
+            lsp_doc_border = true, 
+          },
        })
     end
   '';
