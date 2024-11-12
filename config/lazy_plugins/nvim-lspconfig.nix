@@ -62,7 +62,7 @@
         print(vim.inspect(vim.lsp.buf.list_workspace_folders()))
       end, opts)
 
-      vim.keymap.set("n", "<leader>rn", vim.lsp.buf.rename, opts)
+      vim.keymap.set("n", "<leader>n", vim.lsp.buf.rename, opts)
       vim.keymap.set("n", "<leader>ca", vim.lsp.buf.code_action, opts)
       vim.keymap.set("n", "<leader>f", vim.lsp.buf.format, opts)
 
