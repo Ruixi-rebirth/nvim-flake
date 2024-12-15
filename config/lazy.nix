@@ -7,7 +7,10 @@
 let
   importPlugin = name: import ./lazy_plugins/${name}.nix { inherit pkgs helpers inputs; };
   category = {
-    theme = "nord-nvim";
+    theme = [
+      "nord-nvim"
+      # "nordic-nvim"
+    ];
     filetree = "nvim-tree-lua";
     terminal = "toggleterm-nvim";
     tabline = "bufferline-nvim";
