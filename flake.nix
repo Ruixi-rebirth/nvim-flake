@@ -16,6 +16,10 @@
       url = "github:yetone/avante.nvim";
       flake = false;
     };
+    lz-n = {
+      url = "github:nvim-neorocks/lz.n";
+      flake = false;
+    };
 
   };
 
@@ -23,6 +27,7 @@
     inputs@{ self, ... }:
     let
       lazy-nvim-config = import ./config/lazy.nix;
+      lz-nvim-config = import ./config;
     in
     inputs.flake-parts.lib.mkFlake { inherit inputs; } {
       imports = [
@@ -50,6 +55,13 @@
               inherit inputs;
             };
           };
+          nvim = nixvim'.makeNixvimWithModule {
+            inherit pkgs;
+            module = lz-nvim-config;
+            extraSpecialArgs = {
+              inherit inputs;
+            };
+          };
         in
         {
           _module.args.pkgs = import inputs.nixpkgs {
@@ -62,12 +74,15 @@
           checks = {
             # Run `nix flake check .` to verify that your config is not broken
             default = nixvimLib.check.mkTestDerivationFromNvim {
+              nvim = nvim;
+            };
+            lazynvim = nixvimLib.check.mkTestDerivationFromNvim {
               nvim = lazynvim;
-              name = "A nixvim configuration";
             };
           };
           packages = {
-            default = lazynvim;
+            default = nvim;
+            nvim = nvim;
             lazynvim = lazynvim;
           };
           formatter = pkgs.nixfmt-rfc-style;

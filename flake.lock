@@ -424,6 +424,22 @@
         "type": "github"
       }
     },
+    "lz-n": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1734832486,
+        "narHash": "sha256-RHz8gUKS631umXBVNE4NDtOBuXwjU0MAeCVmPOIZAng=",
+        "owner": "nvim-neorocks",
+        "repo": "lz.n",
+        "rev": "317064a7de9ddc27febc0bb9dc26c4d2a480217e",
+        "type": "github"
+      },
+      "original": {
+        "owner": "nvim-neorocks",
+        "repo": "lz.n",
+        "type": "github"
+      }
+    },
     "neovim-nightly-overlay": {
       "inputs": {
         "flake-compat": "flake-compat",
@@ -686,6 +702,7 @@
       "inputs": {
         "avante-nvim": "avante-nvim",
         "flake-parts": "flake-parts",
+        "lz-n": "lz-n",
         "neovim-nightly-overlay": "neovim-nightly-overlay",
         "nixd": "nixd",
         "nixpkgs": "nixpkgs_3",
