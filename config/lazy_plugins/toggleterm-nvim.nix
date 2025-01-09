@@ -52,7 +52,7 @@
         local ft = vim.bo.filetype
         local run_cmd = { go = "go run", rust = "cargo run" }
         if run_cmd[ft] then
-          vim.cmd("TermExec cmd=" .. '\'clear;echo "Run current file..."; ' .. run_cmd[ft] .. " %'")
+          vim.cmd("TermExec cmd=" .. '\'clear;echo "Run current file..."; ' .. run_cmd[ft] .. " %' go_back=0")
         end
       end
 
