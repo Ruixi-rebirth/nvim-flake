@@ -63,6 +63,7 @@
           checks = {
             # Run `nix flake check .` to verify config is not broken
             default = nixvimLib.check.mkTestDerivationFromNvim {
+              name = "";
               nvim = lazynvim;
             };
           };
