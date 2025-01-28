@@ -70,7 +70,13 @@ in
             config = ''
               function()
                 require("copilot").setup({
-                  suggestion = { enabled = false },
+                  suggestion = {
+                    enabled = true,
+                    auto_trigger = true,
+                    keymap = {
+                      accept = "<C-cr>",
+                    },
+                  },
                   panel = { enabled = false },
                   copilot_node_command = "${pkgs.nodejs-18_x}/bin/node",
                   filetypes = { ["*"] = true, },
