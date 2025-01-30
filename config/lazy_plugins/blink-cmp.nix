@@ -94,18 +94,6 @@ in
           end
         '';
       }
-      {
-        pkg = pkgs.vimPlugins.cmp-spell;
-        config = ''
-          function()
-            vim.cmd('highlight clear SpellBad')
-            vim.cmd('highlight clear SpellCap')
-            vim.cmd('highlight clear SpellLocal')
-            vim.cmd('highlight clear SpellRare')
-          end
-        '';
-      }
-      cmp-rg
       cmp-calc
     ];
   config = ''
@@ -265,7 +253,7 @@ in
           preset = 'default', -- | default | luasnip |
         },
         sources = {
-          default = { "lsp", "path", "snippets", "cmdline", "buffer", "copilot", "spell", "calc", "rg", "dadbod", "minuet" },
+          default = { "lsp", "path", "snippets", "cmdline", "buffer", "copilot", "calc", "dadbod", "minuet" },
           providers = {
             lsp = { score_offset = 5, },
             snippets = { score_offset = 4, },
@@ -320,23 +308,6 @@ in
                 return items
               end,
             },
-            spell = {
-              enabled = true,
-              name = "spell", -- same as source_name in nvim-cmp
-              module = "blink.compat.source",
-              async = true,
-              score_offset = -5,
-              transform_items = function(_, items)
-                local CompletionItemKind = require("blink.cmp.types").CompletionItemKind
-                local kind_idx = #CompletionItemKind + 1
-                CompletionItemKind[kind_idx] = "Spell"
-                for _, item in ipairs(items) do
-                  item.kind = kind_idx
-                  item.source_name = "Spell"
-                end
-                return items
-              end,
-            },
             calc = {
               enabled = true,
               name = "calc", -- same as source_name in nvim-cmp
@@ -350,23 +321,6 @@ in
                 for _, item in ipairs(items) do
                   item.kind = kind_idx
                   item.source_name = "Calc"
-                end
-                return items
-              end,
-            },
-            rg = {
-              enabled = true,
-              name = "rg", -- same as source_name in nvim-cmp
-              module = "blink.compat.source",
-              async = true,
-              score_offset = -5,
-              transform_items = function(_, items)
-                local CompletionItemKind = require("blink.cmp.types").CompletionItemKind
-                local kind_idx = #CompletionItemKind + 1
-                CompletionItemKind[kind_idx] = "Rg"
-                for _, item in ipairs(items) do
-                  item.kind = kind_idx
-                  item.source_name = "Rg"
                 end
                 return items
               end,
@@ -408,9 +362,7 @@ in
             TypeParameter = "",
             Cmdline = "",
             Copilot = "",
-            Spell = "󰓆",
             Calc = "",
-            Rg = "",
             Minuet = "󱗻",
           },
         },

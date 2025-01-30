@@ -27,7 +27,5 @@
     foldlevel = 99;
     exrc = true; # https://github.com/neovim/nvim-lspconfig/wiki/Project-local-settings#use-exrc
     laststatus = 3;
-    spell = true;
-    spelllang = [ "en_us" ];
   };
 }
