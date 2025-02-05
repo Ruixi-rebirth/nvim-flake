@@ -208,6 +208,12 @@
         capabilities = capabilities,
       })
 
+      nvim_lsp.clangd.setup({
+        cmd = { "${pkgs.clang-tools}/bin/clangd" },
+        on_attach = on_attach_common(),
+        capabilities = capabilities,
+      })
+
       -- show diagnostics when InsertLeave
       vim.api.nvim_create_autocmd("FileType", {
         pattern = { "go", "rust", "nix", "haskell" },
