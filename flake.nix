@@ -87,7 +87,11 @@
           _module.args.pkgs = import inputs.nixpkgs {
             inherit system;
             overlays = [
-              inputs.neovim-nightly-overlay.overlays.default
+              # inputs.neovim-nightly-overlay.overlays.default
+              (final: prev: {
+                neovim-unwrapped =
+                  inputs.neovim-nightly-overlay.packages.${final.stdenv.hostPlatform.system}.default;
+              })
               inputs.nixd.overlays.default
             ];
           };
