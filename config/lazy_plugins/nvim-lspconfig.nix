@@ -221,6 +221,8 @@
           "--header-insertion=iwyu",
           "--fallback-style=LLVM",
           "--completion-style=detailed",
+          "--function-arg-placeholders",
+          "--pretty",
         },
         on_attach = on_attach_common(),
         capabilities = vim.tbl_deep_extend("force", capabilities, {
