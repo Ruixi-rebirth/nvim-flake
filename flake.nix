@@ -90,6 +90,9 @@
 
           _module.args.pkgs = import inputs.nixpkgs {
             inherit system;
+            config = {
+              allowBroken = true;
+            };
             overlays = [
               # inputs.neovim-nightly-overlay.overlays.default
               # (final: prev: {
