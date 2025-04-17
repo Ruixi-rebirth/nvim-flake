@@ -50,10 +50,13 @@ in
         },
 
         on_attach = function(client, bufnr)
-          if client.supports_method("textDocument/formatting") then
-            vim.api.nvim_clear_autocmds({ group = vim.api.nvim_create_augroup("LspFormatting", {}), buffer = bufnr })
+          local exclude_ft = { "c", "cpp", "h" }
+          local filetype = vim.api.nvim_buf_get_option(bufnr, "filetype")
+
+          if client.supports_method("textDocument/formatting") and not vim.tbl_contains(exclude_ft, filetype) then
+            local augroup = vim.api.nvim_create_augroup("LspFormatting", { clear = true })
             vim.api.nvim_create_autocmd("BufWritePre", {
-              group = vim.api.nvim_create_augroup("LspFormatting", {}),
+              group = augroup,
               buffer = bufnr,
               callback = function()
                 vim.lsp.buf.format({ async = false })
@@ -62,6 +65,8 @@ in
           end
         end,
       })
+
+
     end
   '';
 }
