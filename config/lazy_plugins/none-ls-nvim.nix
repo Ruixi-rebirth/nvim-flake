@@ -16,6 +16,14 @@ in
   dependencies = with pkgs.vimPlugins; [ plenary-nvim ];
   config = ''
     function()
+      local function get_formatter_cmd(env_var, default)
+        local path = os.getenv(env_var)
+        if path and vim.fn.filereadable(path) == 1 then
+          return path
+        end
+        return default
+      end
+
       require("null-ls").setup({
         sources = {
           -- you must download code formatter by yourself!
@@ -39,7 +47,7 @@ in
             extra_args = { "--indent-type", "Spaces", "--indent-width", "2" },
           }),
           require("null-ls").builtins.formatting.clang_format.with({
-            command = "${pkgs.clang-tools}/bin/clang-format",
+            command = get_formatter_cmd("CLANG_FORMAT_PATH", "${pkgs.clang-tools}/bin/clang-format"),
           }),
           require("null-ls").builtins.formatting.cmake_format.with({
             command = "${pkgs.cmake-format}/bin/cmake-format",
@@ -65,8 +73,6 @@ in
           end
         end,
       })
-
-
     end
   '';
 }
