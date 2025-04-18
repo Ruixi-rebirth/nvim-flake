@@ -217,9 +217,17 @@
         end
         return "''${workspaceFolder}/build"
       end
+      local function get_clangd_path()
+        -- 可以通过环境变量设置，也可以设置默认路径
+        local path = os.getenv("CLANGD_PATH")
+        if path and vim.fn.filereadable(path) == 1 then
+          return path
+        end
+        return "${pkgs.clang-tools}/bin/clangd"
+      end
       nvim_lsp.clangd.setup({
         cmd = {
-          "${pkgs.clang-tools}/bin/clangd",
+          get_clangd_path(),
           "--enable-config",
           "--pch-storage=memory",
           "--compile-commands-dir=" .. get_compile_commands_dir(),
