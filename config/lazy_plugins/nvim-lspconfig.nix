@@ -218,12 +218,18 @@
         return "''${workspaceFolder}/build"
       end
       local function get_clangd_path()
-        -- 可以通过环境变量设置，也可以设置默认路径
         local path = os.getenv("CLANGD_PATH")
         if path and vim.fn.filereadable(path) == 1 then
           return path
         end
         return "${pkgs.clang-tools}/bin/clangd"
+      end
+      local function get_clang_path()
+        local path = os.getenv("CLANG_PATH")
+        if path and vim.fn.filereadable(path) == 1 then
+          return path
+        end
+        return "${pkgs.clang}/bin/clang"
       end
       nvim_lsp.clangd.setup({
         cmd = {
@@ -240,6 +246,7 @@
           "--completion-style=detailed",
           "--function-arg-placeholders",
           "--pretty",
+          "--query-driver=" .. get_clang_path(),
         },
         on_attach = on_attach_common(),
         capabilities = vim.tbl_deep_extend("force", capabilities, {

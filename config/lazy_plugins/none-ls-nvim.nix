@@ -53,7 +53,7 @@ in
             command = "${pkgs.cmake-format}/bin/cmake-format",
           }),
           require("null-ls").builtins.formatting.gn_format.with({
-            command = "${pkgs.gn}/bin/gn",
+            command = get_formatter_cmd("GN_PATH", "${pkgs.gn}/bin/gn"),
           }),
         },
 
