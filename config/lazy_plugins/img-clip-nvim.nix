@@ -10,7 +10,7 @@
       drag_and_drop = {
         insert_mode = true;
       };
-      use_absolute_path = false;
+      use_absolute_path = true;
     };
   };
   opts = { };
