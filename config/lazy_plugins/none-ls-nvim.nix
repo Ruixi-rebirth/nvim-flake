@@ -59,7 +59,7 @@ in
 
         on_attach = function(client, bufnr)
           local exclude_ft = { "c", "cpp", "h" }
-          local filetype = vim.api.nvim_buf_get_option(bufnr, "filetype")
+          local filetype = vim.bo[bufnr].filetype
 
           if client.supports_method("textDocument/formatting") and not vim.tbl_contains(exclude_ft, filetype) then
             local augroup = vim.api.nvim_create_augroup("LspFormatting", { clear = true })
