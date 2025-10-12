@@ -35,6 +35,10 @@
       url = "github:MunifTanjim/nui.nvim";
       flake = false;
     };
+    copilot-cmp-nvim = {
+      url = "github:zbirenbaum/copilot-cmp";
+      flake = false;
+    };
   };
 
   outputs =
@@ -98,7 +102,7 @@
               allowBroken = true;
             };
             overlays = [
-              # inputs.neovim-nightly-overlay.overlays.default
+              inputs.neovim-nightly-overlay.overlays.default
               # (final: prev: {
               #   neovim-unwrapped =
               #     inputs.neovim-nightly-overlay.packages.${final.stdenv.hostPlatform.system}.default;

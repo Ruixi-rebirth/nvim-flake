@@ -79,18 +79,35 @@
         -- vim.cmd [[autocmd BufWritePre <buffer> lua vim.lsp.buf.format()]] -- use none-ls
       end
 
-      local nvim_lsp = require("lspconfig")
+      local nvim_lsp = vim.lsp
+      vim.lsp.enable({
+        'nixd',           -- nix
+        'gopls',          -- golang
+        'pyright',        -- python
+        'lua_ls',         -- lua
+        'rust_analyzer',  -- rust
+        'html',           -- html
+        'cssls',          -- css
+        'ts_ls',          -- typescript
+        'volar',          -- vue
+        'bashls',         -- bash
+        'hls',            -- haskell
+        'clangd',         -- c/c++
+        'cmake',          -- cmake
+        'mesonlsp'        -- meson
+      })
       ---------------------
-      -- setup languages --
+      -- config languages --
       ---------------------
       -- nix
-      nvim_lsp.nixd.setup({
+      nvim_lsp.config.nixd = {
         cmd = { "${pkgs.nixd}/bin/nixd" },
         on_attach = on_attach_common(),
         capabilities = capabilities,
-      })
+      }
+
       -- golang
-      nvim_lsp["gopls"].setup({
+      nvim_lsp.config.gopls = {
         cmd = { "${pkgs.gopls}/bin/gopls" },
         on_attach = on_attach_common(),
         capabilities = capabilities,
@@ -117,9 +134,10 @@
         init_options = {
           usePlaceholders = true,
         },
-      })
-      --python
-      nvim_lsp.pyright.setup({
+      }
+
+      -- python
+      nvim_lsp.config.pyright = {
         cmd = { "${pkgs.pyright}/bin/pyright-langserver", "--stdio" },
         on_attach = on_attach_common(),
         capabilities = capabilities,
@@ -133,83 +151,88 @@
             },
           },
         },
-      })
+      }
 
-      --lua
-      nvim_lsp.lua_ls.setup({
+      -- lua
+      nvim_lsp.config.lua_ls = {
         cmd = { "${pkgs.lua-language-server}/bin/lua-language-server" },
         on_attach = on_attach_common(),
         capabilities = capabilities,
         settings = {
           Lua = {
             runtime = {
-              -- Tell the language server which version of Lua you're using (most likely LuaJIT in the case of Neovim)
               version = "LuaJIT",
             },
             diagnostics = {
-              -- Get the language server to recognize the `vim` global
               globals = { "vim" },
             },
             workspace = {
-              -- Make the server aware of Neovim runtime files
               library = vim.api.nvim_get_runtime_file("", true),
               checkThirdParty = false,
             },
-            -- Do not send telemetry data containing a randomized but unique identifier
             telemetry = {
               enable = false,
             },
           },
         },
-      })
+      }
 
-      nvim_lsp.rust_analyzer.setup({
+      -- rust
+      nvim_lsp.config.rust_analyzer = {
         cmd = { "${pkgs.rust-analyzer}/bin/rust-analyzer" },
         on_attach = function(client, bufnr)
           on_attach_common(client, bufnr)
           vim.cmd([[autocmd BufWritePre <buffer> lua vim.lsp.buf.format()]])
         end,
         capabilities = capabilities,
-      })
-      nvim_lsp.html.setup({
+      }
+
+      -- html
+      nvim_lsp.config.html = {
         cmd = { "${pkgs.vscode-langservers-extracted}/bin/vscode-html-language-server", "--stdio" },
         on_attach = on_attach_common(),
         capabilities = capabilities,
-      })
+      }
 
-      nvim_lsp.cssls.setup({
+      -- css
+      nvim_lsp.config.cssls = {
         cmd = { "${pkgs.vscode-langservers-extracted}/bin/vscode-css-language-server", "--stdio" },
         on_attach = on_attach_common(),
         capabilities = capabilities,
-      })
+      }
 
-      nvim_lsp.ts_ls.setup({
+      -- typescript
+      nvim_lsp.config.ts_ls = {
         cmd = { "${pkgs.typescript-language-server}/bin/typescript-language-server", "--stdio" },
         on_attach = on_attach_common(),
         capabilities = capabilities,
-      })
+      }
 
-      nvim_lsp.volar.setup({
+      -- vue
+      nvim_lsp.config.volar = {
         cmd = { "${pkgs.vue-language-server}/bin/vue-language-server", "--stdio" },
         on_attach = on_attach_common(),
         capabilities = capabilities,
-      })
+      }
 
-      nvim_lsp.bashls.setup({
+      -- bash
+      nvim_lsp.config.bashls = {
         cmd = { "${pkgs.bash-language-server}/bin/bash-language-server", "start" },
         on_attach = on_attach_common(),
         capabilities = capabilities,
-      })
+      }
 
-      nvim_lsp.hls.setup({
+      -- haskell
+      nvim_lsp.config.hls = {
         cmd = { "${pkgs.haskell-language-server}/bin/haskell-language-server-wrapper", "--lsp" },
         on_attach = function(client, bufnr)
           on_attach_common(client, bufnr)
           vim.cmd([[autocmd BufWritePre <buffer> lua vim.lsp.buf.format()]])
         end,
         capabilities = capabilities,
-      })
+      }
 
+      -- clangd
       local function get_compile_commands_dir()
         local dir = os.getenv("CCD")
         if dir and vim.fn.isdirectory(dir) == 1 then
@@ -217,6 +240,7 @@
         end
         return "''${workspaceFolder}/build"
       end
+
       local function get_clangd_path()
         local path = os.getenv("CLANGD_PATH")
         if path and vim.fn.filereadable(path) == 1 then
@@ -224,6 +248,7 @@
         end
         return "${pkgs.clang-tools}/bin/clangd"
       end
+
       local function get_clang_path()
         local path = os.getenv("CLANG_PATH")
         if path and vim.fn.filereadable(path) == 1 then
@@ -231,7 +256,8 @@
         end
         return "${pkgs.clang}/bin/clang"
       end
-      nvim_lsp.clangd.setup({
+
+      nvim_lsp.config.clangd = {
         cmd = {
           get_clangd_path(),
           "--enable-config",
@@ -252,23 +278,24 @@
         capabilities = vim.tbl_deep_extend("force", capabilities, {
           offsetEncoding = { "utf-16" },
         }),
-      })
+      }
 
-      nvim_lsp.cmake.setup({
+      -- cmake
+      nvim_lsp.config.cmake = {
         cmd = { "${pkgs.cmake-language-server}/bin/cmake-language-server" },
         on_attach = on_attach_common(),
         capabilities = capabilities,
-      })
+      }
 
-      nvim_lsp.mesonlsp.setup({
+      -- meson
+      nvim_lsp.config.mesonlsp = {
         cmd = { "${pkgs.mesonlsp}/bin/mesonlsp", "--lsp" },
         on_attach = function(client, bufnr)
           on_attach_common(client, bufnr)
           vim.cmd([[autocmd BufWritePre <buffer> lua vim.lsp.buf.format()]])
         end,
         capabilities = capabilities,
-      })
-
+      }
       -- show diagnostics when InsertLeave
       vim.api.nvim_create_autocmd("FileType", {
         pattern = { "go", "rust", "nix", "haskell", "cpp", "c" },
