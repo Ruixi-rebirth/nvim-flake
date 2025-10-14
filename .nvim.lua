@@ -23,10 +23,10 @@ nvim_lsp.config.nixd = {
   },
 }
 
--- 如果当前目录存在 anante.lua 则导入这个文件
 local function import_anante()
-  local anante_path = vim.fn.getcwd() .. "/.anante.lua"
+  local anante_path = vim.fn.getcwd() .. "/.avante.lua"
   if vim.fn.filereadable(anante_path) == 1 then
     dofile(anante_path)
   end
 end
+import_anante()

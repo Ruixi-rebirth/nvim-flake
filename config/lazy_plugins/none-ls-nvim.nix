@@ -37,7 +37,7 @@ in
             command = "${pkgs.gofumpt}/bin/gofumpt",
           }),
           require("null-ls").builtins.formatting.nixpkgs_fmt.with({
-            command = "${pkgs.nixfmt-rfc-style}/bin/nixfmt",
+            command = "${pkgs.nixfmt}/bin/nixfmt",
           }),
           require("null-ls").builtins.formatting.shfmt.with({
             command = "${pkgs.shfmt}/bin/shfmt",

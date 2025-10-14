@@ -93,7 +93,7 @@
                 indent_width = 2;
               };
             };
-            programs.nixfmt-rfc-style.enable = true;
+            programs.nixfmt.enable = true;
           };
 
           _module.args.pkgs = import inputs.nixpkgs {
