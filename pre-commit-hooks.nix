@@ -5,7 +5,7 @@
   perSystem.pre-commit = {
     settings.excludes = [ "flake.lock" ];
     settings.hooks = {
-      nixfmt-rfc-style.enable = true;
+      nixfmt.enable = true;
       prettier.enable = true;
     };
   };
