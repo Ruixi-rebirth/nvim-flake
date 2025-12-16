@@ -1,4 +1,4 @@
-{ pkgs, helpers, ... }:
+{ pkgs, ... }:
 {
   pkg = pkgs.vimPlugins.vim-nix;
   lazy = true;

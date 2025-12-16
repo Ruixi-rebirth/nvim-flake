@@ -1,4 +1,4 @@
-{ pkgs, helpers, ... }:
+{ pkgs, ... }:
 {
   pkgs = pkgs.vimPlugins.img-clip-nvim;
   event = "VeryLazy";

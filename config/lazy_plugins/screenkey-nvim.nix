@@ -1,4 +1,4 @@
-{ pkgs, helpers, ... }:
+{ pkgs, ... }:
 let
   screenkey-nvim = pkgs.vimUtils.buildVimPlugin {
     name = "screenkey-nvim";

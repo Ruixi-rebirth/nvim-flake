@@ -1,4 +1,4 @@
-{ pkgs, helpers, ... }:
+{ pkgs, ... }:
 {
   pkg = pkgs.vimPlugins.comment-nvim;
   lazy = true;

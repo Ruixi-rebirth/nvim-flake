@@ -1,4 +1,4 @@
-{ pkgs, helpers, ... }:
+{ pkgs, lib, ... }:
 {
   pkg = pkgs.vimPlugins.codesnap-nvim;
   opts = {
@@ -10,7 +10,7 @@
     watermark = "";
     code_font_family = "Maple Mono NF CN";
   };
-  keys = helpers.mkRaw ''
+  keys = lib.nixvim.mkRaw ''
     {
       { "<leader>cc", "<cmd>CodeSnap<cr>", mode = "x", desc = "Save selected code snapshot into clipboard" },
       { "<leader>cs", "<cmd>CodeSnapSave<cr>", mode = "x", desc = "Save selected code snapshot in ~/Pictures" },

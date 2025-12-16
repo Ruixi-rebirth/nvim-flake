@@ -1,9 +1,9 @@
-{ pkgs, helpers, ... }:
+{ pkgs, lib, ... }:
 {
   pkg = pkgs.vimPlugins.telescope-nvim;
   lazy = true;
   dependencies = with pkgs.vimPlugins; [ plenary-nvim ];
-  keys = helpers.mkRaw ''
+  keys = lib.nixvim.mkRaw ''
     {
       { "<Leader>e", "<cmd>Telescope<CR>", desc = "telescope" },
     }

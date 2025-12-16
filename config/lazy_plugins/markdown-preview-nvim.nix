@@ -1,8 +1,8 @@
-{ pkgs, helpers, ... }:
+{ pkgs, lib, ... }:
 {
   pkg = pkgs.vimPlugins.markdown-preview-nvim;
   lazy = true;
-  keys = helpers.mkRaw ''
+  keys = lib.nixvim.mkRaw ''
     {
       { "mp", "<cmd>MarkdownPreview<CR>", desc = "toggle markdown-preview" }
     }

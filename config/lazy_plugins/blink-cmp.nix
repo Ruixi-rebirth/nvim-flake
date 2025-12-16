@@ -1,7 +1,6 @@
 {
   pkgs,
   inputs,
-  helpers,
   ...
 }:
 let
@@ -12,7 +11,7 @@ let
   };
 in
 {
-  pkg = inputs.blink-cmp.packages.${pkgs.system}.blink-cmp;
+  pkg = inputs.blink-cmp.packages.${pkgs.stdenv.hostPlatform.system}.blink-cmp;
   lazy = true;
   event = "InsertEnter";
   dependencies =

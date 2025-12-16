@@ -1,7 +1,7 @@
-{ pkgs, helpers, ... }:
+{ pkgs, lib, ... }:
 {
   pkg = pkgs.vimPlugins.inc-rename-nvim;
-  keys = helpers.mkRaw ''
+  keys = lib.nixvim.mkRaw ''
     {
       { "<leader>n", ":IncRename ", desc = "lsp rename" }
     }

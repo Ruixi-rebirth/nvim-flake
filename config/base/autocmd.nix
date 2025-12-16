@@ -1,4 +1,4 @@
-{ helpers, ... }:
+{ lib, ... }:
 {
   autoCmd = [
     {
@@ -20,7 +20,7 @@
     {
       event = [ "FileType" ];
       pattern = [ "*" ];
-      callback = helpers.mkRaw ''
+      callback = lib.nixvim.mkRaw ''
         function()
           local util = require("lspconfig.util")
           local path = vim.fn.expand("%:p")
@@ -42,7 +42,7 @@
       # Save folding state
       event = [ "BufWinLeave" ];
       pattern = [ "*" ];
-      callback = helpers.mkRaw ''
+      callback = lib.nixvim.mkRaw ''
         function()
           pcall(function() vim.cmd("mkview") end)
         end
@@ -52,7 +52,7 @@
       # Restore folding state
       event = [ "BufRead" ];
       pattern = [ "*" ];
-      callback = helpers.mkRaw ''
+      callback = lib.nixvim.mkRaw ''
         function()
           pcall(function() vim.cmd("loadview") end)
         end

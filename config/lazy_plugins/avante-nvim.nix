@@ -1,6 +1,6 @@
 {
   pkgs,
-  helpers,
+  lib,
   inputs,
   ...
 }:
@@ -14,7 +14,7 @@ in
   pkg = pkgs.vimPlugins.avante-nvim;
   event = "VeryLazy";
   lazy = true;
-  keys = helpers.mkRaw ''
+  keys = lib.nixvim.mkRaw ''
     {
       { "<leader>at", "<cmd>AvanteToggle<CR>", desc = "Toggle Avante" },
       {

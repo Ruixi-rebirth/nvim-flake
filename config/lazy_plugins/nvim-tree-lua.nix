@@ -1,9 +1,9 @@
-{ pkgs, helpers, ... }:
+{ pkgs, lib, ... }:
 {
   pkg = pkgs.vimPlugins.nvim-tree-lua;
   lazy = true;
   dependencies = with pkgs.vimPlugins; [ nvim-web-devicons ];
-  keys = helpers.mkRaw ''
+  keys = lib.nixvim.mkRaw ''
     {
       { "tt", "<cmd>NvimTreeToggle<cr>", desc = "Toggle nvim-tree" },
       { "gF", "<cmd>NvimTreeFindFileToggle<cr>", desc = "Jump to current file's directory" }

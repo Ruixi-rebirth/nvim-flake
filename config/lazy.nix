@@ -1,11 +1,11 @@
 {
   pkgs,
-  helpers,
+  lib,
   inputs,
   ...
 }:
 let
-  importPlugin = name: import ./lazy_plugins/${name}.nix { inherit pkgs helpers inputs; };
+  importPlugin = name: import ./lazy_plugins/${name}.nix { inherit pkgs lib inputs; };
   category = {
     theme = [
       "nord-nvim"

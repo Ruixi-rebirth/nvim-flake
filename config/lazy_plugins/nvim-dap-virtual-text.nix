@@ -1,4 +1,4 @@
-{ pkgs, helpers, ... }:
+{ pkgs, ... }:
 {
   pkg = pkgs.vimPlugins.nvim-dap-virtual-text;
   lazy = true;

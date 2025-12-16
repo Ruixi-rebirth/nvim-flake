@@ -1,4 +1,4 @@
-{ pkgs, helpers, ... }:
+{ pkgs, lib, ... }:
 {
   pkg = pkgs.vimPlugins.outline-nvim;
   lazy = true;
@@ -6,13 +6,13 @@
     "Outline"
     "OutlineOpen"
   ];
-  keys = helpers.mkRaw ''
+  keys = lib.nixvim.mkRaw ''
     {
       -- Example mapping to toggle outline
       { "<leader>o", "<cmd>Outline<CR>", desc = "Toggle outline" }
     }
   '';
-  opts = helpers.mkRaw ''
+  opts = lib.nixvim.mkRaw ''
     {
       outline_window = {
         position = "right",

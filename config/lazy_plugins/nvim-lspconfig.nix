@@ -3,7 +3,7 @@
   pkg = pkgs.vimPlugins.nvim-lspconfig;
   dependencies = with pkgs.vimPlugins; [
     # nvim-cmp
-    inputs.blink-cmp.packages.${pkgs.system}.default
+    inputs.blink-cmp.packages.${pkgs.stdenv.hostPlatform.system}.default
   ];
   config = ''
     function()

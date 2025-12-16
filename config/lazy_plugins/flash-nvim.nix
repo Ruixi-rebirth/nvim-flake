@@ -1,9 +1,9 @@
-{ pkgs, helpers, ... }:
+{ pkgs, lib, ... }:
 {
   pkg = pkgs.vimPlugins.flash-nvim;
   lazy = true;
   event = "VeryLazy";
-  keys = helpers.mkRaw ''
+  keys = lib.nixvim.mkRaw ''
     {
       {
         "<c-f>",

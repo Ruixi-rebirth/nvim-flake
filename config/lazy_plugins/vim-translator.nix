@@ -1,7 +1,7 @@
 {
   pkgs,
   inputs,
-  helpers,
+  lib,
   ...
 }:
 let
@@ -17,7 +17,7 @@ in
 {
   pkg = vim-translator;
   lazy = false;
-  keys = helpers.mkRaw ''
+  keys = lib.nixvim.mkRaw ''
     {
       { "<leader>d", "<Plug>TranslateW", desc = "Display translation in a window", },
       { "<leader>d", "<Plug>TranslateWV", desc = "Display translation in a window", mode = {'v'} },

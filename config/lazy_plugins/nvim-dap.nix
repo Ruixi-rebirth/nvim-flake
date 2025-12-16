@@ -1,8 +1,8 @@
-{ pkgs, helpers, ... }:
+{ pkgs, lib, ... }:
 {
   pkg = pkgs.vimPlugins.nvim-dap;
   lazy = true;
-  keys = helpers.mkRaw ''
+  keys = lib.nixvim.mkRaw ''
     {
       { "<C-b>", "<cmd>lua require'dap'.toggle_breakpoint()<CR>", desc = "toggle_breakpoint" }
     }

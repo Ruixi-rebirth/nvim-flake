@@ -1,4 +1,4 @@
-{ pkgs, helpers, ... }:
+{ pkgs, ... }:
 let
   LspUI = pkgs.vimUtils.buildVimPlugin {
     name = "lspui";
