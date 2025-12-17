@@ -102,7 +102,7 @@
               allowBroken = true;
             };
             overlays = [
-              inputs.neovim-nightly-overlay.overlays.default
+              # inputs.neovim-nightly-overlay.overlays.default
               # (final: prev: {
               #   neovim-unwrapped =
               #     inputs.neovim-nightly-overlay.packages.${final.stdenv.hostPlatform.system}.default;
