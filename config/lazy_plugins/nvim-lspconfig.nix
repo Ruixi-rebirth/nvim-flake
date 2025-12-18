@@ -19,6 +19,18 @@
         lineFoldingOnly = true,
       }
 
+      local util = require("lspconfig.util")
+      local find_repo_root = function(startpath)
+        local repo = vim.fs.find('.repo', { path = startpath, upward = true })[1]
+        return repo and vim.fs.dirname(repo) or nil
+      end
+      local filepath = vim.fn.expand("%:p")
+      local root_dir = find_repo_root(filepath) or util.find_git_ancestor(filepath)
+      if not root_dir then
+        print("No .repo or Git root directory found!")
+        return
+      end
+
       vim.diagnostic.config({
         virtual_text = false,
         signs = true,
@@ -234,11 +246,11 @@
 
       -- clangd
       local function get_compile_commands_dir()
-        local dir = os.getenv("CCD")
+        local dir = os.getenv("COMPILE_COMMANDS_DIR")
         if dir and vim.fn.isdirectory(dir) == 1 then
           return dir
         end
-        return "''${workspaceFolder}/build"
+        return root_dir .. "/build"
       end
 
       local function get_clangd_path()

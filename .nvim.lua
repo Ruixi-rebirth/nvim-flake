@@ -1,5 +1,5 @@
 local nvim_lsp = vim.lsp
-vim.lsp.enable("nixd")
+nvim_lsp.enable("nixd")
 nvim_lsp.config.nixd = {
   cmd = { "nixd" },
   settings = {
