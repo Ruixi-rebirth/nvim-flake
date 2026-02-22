@@ -35,7 +35,7 @@ in
       vim.wo.foldexpr = 'v:lua.vim.treesitter.foldexpr()'
       vim.opt.runtimepath:append("${nvim-plugintree}")
       vim.opt.runtimepath:append("${treesitter-parsers}")
-      require'nvim-treesitter.configs'.setup {
+      require'nvim-treesitter'.setup {
         parser_install_dir = "${treesitter-parsers}",
         ensure_installed = {},
         auto_install = false,

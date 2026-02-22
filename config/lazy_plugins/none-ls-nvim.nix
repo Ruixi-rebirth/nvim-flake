@@ -10,7 +10,7 @@ let
   };
 in
 {
-  pkg = none-ls-nvim;
+  pkg = pkgs.vimPlugins.none-ls-nvim;
   lazy = false;
   dependencies = with pkgs.vimPlugins; [ plenary-nvim ];
   config = ''
