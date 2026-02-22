@@ -19,7 +19,7 @@ jobs:
             experimental-features = nix-command flakes
             access-tokens = github.com=${{ secrets.GITHUB_TOKEN }}
       - name: Flake check
-        run: nix flake check --all-systems
+        run: nix flake check
       - name: Setup cachix
         uses: cachix/cachix-action@v16
         with:

@@ -23,5 +23,5 @@ in
       { "<leader>d", "<Plug>TranslateWV", desc = "Display translation in a window", mode = {'v'} },
     }
   '';
-  config = '''';
+  config = "";
 }

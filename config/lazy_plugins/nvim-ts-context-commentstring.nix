@@ -1,4 +1,4 @@
-{ pkgs,  ... }:
+{ pkgs, ... }:
 {
   pkg = pkgs.vimPlugins.nvim-ts-context-commentstring;
   lazy = true;

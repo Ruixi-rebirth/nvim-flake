@@ -27,7 +27,10 @@
       local filepath = vim.fn.expand("%:p")
       local root_dir = find_repo_root(filepath) or util.find_git_ancestor(filepath)
       if not root_dir then
-        print("No .repo or Git root directory found!")
+        if #vim.api.nvim_list_uis() == 0 then
+          return
+        end
+        vim.notify("No .repo or Git root directory found!", vim.log.levels.WARN)
         return
       end
 
