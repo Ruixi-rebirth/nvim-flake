@@ -19,6 +19,7 @@ in
     [
       friendly-snippets
       luasnip
+      blink-cmp-avante
       {
         pkg = pkgs.vimPlugins.blink-compat;
         lazy = true;
@@ -286,7 +287,7 @@ in
           preset = 'default', -- | default | luasnip |
         },
         sources = {
-          default = { "lsp", "path", "snippets", "cmdline", "buffer", "copilot", "calc", "dadbod", "minuet" },
+          default = { "lsp", "path", "snippets", "cmdline", "buffer", "copilot", "calc", "dadbod", "minuet", "avante" },
           providers = {
             lsp = { score_offset = 5, },
             snippets = { score_offset = 4, },
@@ -362,6 +363,13 @@ in
               name = "Dadbod",
               module = "vim_dadbod_completion.blink",
               score_offset = -3,
+            },
+            avante = {
+              module = "blink-cmp-avante",
+              name = "Avante",
+              opts = {
+                -- options for blink-cmp-avante
+              },
             },
           },
         },

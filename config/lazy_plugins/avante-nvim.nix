@@ -43,6 +43,10 @@ in
   ++ (with pkgs.vimPlugins; [
     nvim-treesitter
     dressing-nvim
+    snacks-nvim
+    telescope-nvim # for file_selector provider telescope
+    copilot-lua # for providers='copilot'
+    fzf-lua # for file_selector provider fzf
     plenary-nvim
     nvim-web-devicons
     {
@@ -78,7 +82,7 @@ in
     }
   ]);
   opts = {
-    instructions_file = "avante.md";
+    instructions_file = "proj_instruction.md";
     provider = "claude";
     providers = {
       claude = {
@@ -177,11 +181,15 @@ in
       override_timeoutlen = 500; # Timeout override while hovering over a diff
     };
     selector = {
+      provider = "fzf_lua";
       exclude_auto_select = [ "NvimTree" ];
+    };
+    input = {
+      provider = "snacks";
     };
   };
   config = ''
-    function()
+    function(_, opts)
       local util = require("lspconfig.util")
       local find_repo_root = function(startpath)
         local repo = vim.fs.find('.repo', { path = startpath, upward = true })[1]
@@ -189,82 +197,80 @@ in
       end
       local filepath = vim.fn.expand("%:p")
       local root_dir = find_repo_root(filepath) or util.find_git_ancestor(filepath)
-      if not root_dir then
-        if #vim.api.nvim_list_uis() == 0 then
-          return
-        end
-        vim.notify("No .repo or Git root directory found!", vim.log.levels.WARN)
-        return
-      end
-      local avante_config_path = root_dir .. "/.avante.lua"
+      local avante_config_path = root_dir and (root_dir .. "/.avante.lua") or nil
 
       vim.api.nvim_create_user_command("GenerateAvanteConfig", function()
+        if not root_dir then
+          vim.notify("No .repo or Git root directory found!", vim.log.levels.ERROR)
+          return
+        end
         local config_content = [[
-    require("avante").setup({
-      provider = "claude",
-      providers = {
-        openai = {
-          endpoint = "https://api.deepseek.com/v1",
-          model = "deepseek-chat",
-          timeout = 30000, -- Timeout in milliseconds
-          extra_request_body = {
-            temperature = 0,
-            max_tokens = 18192,
-          },
-        },
-        copilot = {
-          endpoint = "https://api.githubcopilot.com",
-          model = "gpt-4o-2024-11-20",
-          proxy = nil, -- [protocol://]host[:port] Use this proxy
-          allow_insecure = false, -- Allow insecure server connections
-          timeout = 30000, -- Timeout in milliseconds
-          extra_request_body = {
-            temperature = 0,
-            max_tokens = 40960,
-          },
-        },
-        claude = {
-          endpoint = "https://api.anthropic.com",
-          model = "claude-sonnet-4-20250514",
-          timeout = 30000, -- Timeout in milliseconds
-          extra_request_body = {
-            temperature = 0,
-            max_tokens = 64000,
-          },
-        },
-        gemini = {
-          endpoint = "https://generativelanguage.googleapis.com/v1beta/models",
-          model = "gemini-2.0-flash",
-          timeout = 30000, -- Timeout in milliseconds
-          extra_request_body = {
-            generationConfig = {
-              temperature = 0.75,
-            },
-          },
+return {
+  provider = "claude",
+  providers = {
+    copilot = {
+      endpoint = "https://api.githubcopilot.com",
+      model = "gpt-4o-2024-11-20",
+      proxy = nil, -- [protocol://]host[:port] Use this proxy
+      allow_insecure = false, -- Allow insecure server connections
+      timeout = 30000, -- Timeout in milliseconds
+      extra_request_body = {
+        temperature = 0,
+        max_tokens = 40960,
+      },
+    },
+    claude = {
+      endpoint = "https://api.anthropic.com",
+      model = "claude-sonnet-4-20250514",
+      timeout = 30000, -- Timeout in milliseconds
+      extra_request_body = {
+        temperature = 0,
+        max_tokens = 64000,
+      },
+    },
+    gemini = {
+      endpoint = "https://generativelanguage.googleapis.com/v1beta/models",
+      model = "gemini-2.0-flash",
+      timeout = 30000, -- Timeout in milliseconds
+      extra_request_body = {
+        generationConfig = {
+          temperature = 0.75,
         },
       },
-      dual_boost = {
-        enabled = false,
-        first_provider = "claude",
-        second_provider = "openai",
-        prompt = "Based on the two reference outputs below, generate a response that incorporates elements from both but reflects your own judgment and unique perspective. Do not provide any explanation, just give the response directly. Reference Output 1: [{{provider1_output}}], Reference Output 2: [{{provider2_output}}]",
-        timeout = 60000, -- Timeout in milliseconds
+    },
+  },
+  acp_providers = {
+    ["gemini-cli"] = {
+      command = "gemini",
+      args = { "--experimental-acp" },
+      env = {
+        NODE_NO_WARNINGS = "1",
+        GEMINI_API_KEY = os.getenv("GEMINI_API_KEY"),
       },
-      ---Specify the behaviour of avante.nvim
-      ---1. auto_apply_diff_after_generation: Whether to automatically apply diff after LLM response.
-      ---                                     This would simulate similar behaviour to cursor. Default to false.
-      ---2. auto_set_keymaps                : Whether to automatically set the keymap for the current line. Default to true.
-      ---                                     Note that avante will safely set these keymap. See https://github.com/yetone/avante.nvim/wiki#keymaps-and-api-i-guess for more details.
-      ---3. auto_set_highlight_group        : Whether to automatically set the highlight group for the current line. Default to true.
-      ---4. support_paste_from_clipboard    : Whether to support pasting image from clipboard. This will be determined automatically based whether img-clip is available or not.
-      behaviour = {
-        auto_suggestions = false, -- Experimental stage
-        auto_set_highlight_group = true,
-        auto_set_keymaps = true,
-        auto_apply_diff_after_generation = false,
-        support_paste_from_clipboard = false,
-      },
-    })]]
+    },
+  },
+  dual_boost = {
+    enabled = false,
+    first_provider = "claude",
+    second_provider = "gemini",
+    prompt = "Based on the two reference outputs below, generate a response that incorporates elements from both but reflects your own judgment and unique perspective. Do not provide any explanation, just give the response directly. Reference Output 1: [{{provider1_output}}], Reference Output 2: [{{provider2_output}}]",
+    timeout = 60000, -- Timeout in milliseconds
+  },
+  ---Specify the behaviour of avante.nvim
+  ---1. auto_apply_diff_after_generation: Whether to automatically apply diff after LLM response.
+  ---                                     This would simulate similar behaviour to cursor. Default to false.
+  ---2. auto_set_keymaps                : Whether to automatically set the keymap for the current line. Default to true.
+  ---                                     Note that avante will safely set these keymap. See https://github.com/yetone/avante.nvim/wiki#keymaps-and-api-i-guess for more details.
+  ---3. auto_set_highlight_group        : Whether to automatically set the highlight group for the current line. Default to true.
+  ---4. support_paste_from_clipboard    : Whether to support pasting image from clipboard. This will be determined automatically based whether img-clip is available or not.
+  behaviour = {
+    auto_suggestions = false, -- Experimental stage
+    auto_set_highlight_group = true,
+    auto_set_keymaps = true,
+    auto_apply_diff_after_generation = false,
+    support_paste_from_clipboard = false,
+  },
+}]]
 
         local file = io.open(avante_config_path, "w")
         if file then
@@ -273,13 +279,23 @@ in
           print(".avante.lua configuration file updated at: " .. avante_config_path)
         else
           print("Failed to update .avante.lua configuration file!")
+          return
         end
 
-        vim.cmd("source " .. avante_config_path)
+        local ok, result = pcall(dofile, avante_config_path)
+        if ok and type(result) == "table" then
+          require("avante").setup(vim.tbl_deep_extend("force", opts, result))
+        end
       end, {})
-      if vim.fn.filereadable(avante_config_path) == 1 then
-        dofile(avante_config_path)
+
+      local local_config = {}
+      if avante_config_path and vim.fn.filereadable(avante_config_path) == 1 then
+        local ok, result = pcall(dofile, avante_config_path)
+        if ok and type(result) == "table" then
+          local_config = result
+        end
       end
+      require("avante").setup(vim.tbl_deep_extend("force", opts, local_config))
 
       vim.api.nvim_create_user_command("AvanteZenMode", function()
         vim.defer_fn(function()

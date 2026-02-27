@@ -1,21 +1,12 @@
-require("avante").setup({
-  provider = "claude",
+return {
+  provider = "gemini",
   providers = {
-    openai = {
-      endpoint = "https://api.deepseek.com/v1",
-      model = "deepseek-chat",
-      timeout = 30000, -- Timeout in milliseconds
-      extra_request_body = {
-        temperature = 0,
-        max_tokens = 18192,
-      },
-    },
     copilot = {
       endpoint = "https://api.githubcopilot.com",
       model = "gpt-4o-2024-11-20",
-      proxy = nil, -- [protocol://]host[:port] Use this proxy
+      proxy = nil,            -- [protocol://]host[:port] Use this proxy
       allow_insecure = false, -- Allow insecure server connections
-      timeout = 30000, -- Timeout in milliseconds
+      timeout = 30000,        -- Timeout in milliseconds
       extra_request_body = {
         temperature = 0,
         max_tokens = 40960,
@@ -41,11 +32,22 @@ require("avante").setup({
       },
     },
   },
+  acp_providers = {
+    ["gemini-cli"] = {
+      command = "gemini",
+      args = { "--experimental-acp" },
+      env = {
+        NODE_NO_WARNINGS = "1",
+        GEMINI_API_KEY = os.getenv("GEMINI_API_KEY"),
+      },
+    },
+  },
   dual_boost = {
     enabled = false,
     first_provider = "claude",
-    second_provider = "openai",
-    prompt = "Based on the two reference outputs below, generate a response that incorporates elements from both but reflects your own judgment and unique perspective. Do not provide any explanation, just give the response directly. Reference Output 1: [{{provider1_output}}], Reference Output 2: [{{provider2_output}}]",
+    second_provider = "gemini",
+    prompt =
+    "Based on the two reference outputs below, generate a response that incorporates elements from both but reflects your own judgment and unique perspective. Do not provide any explanation, just give the response directly. Reference Output 1: [{{provider1_output}}], Reference Output 2: [{{provider2_output}}]",
     timeout = 60000, -- Timeout in milliseconds
   },
   ---Specify the behaviour of avante.nvim
@@ -62,4 +64,4 @@ require("avante").setup({
     auto_apply_diff_after_generation = false,
     support_paste_from_clipboard = false,
   },
-})
+}
