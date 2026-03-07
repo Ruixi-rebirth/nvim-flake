@@ -58,6 +58,24 @@
 
       vim.api.nvim_set_keymap("n", "<space>r", "<cmd>lua runFile()<CR>", { noremap = true, silent = true })
 
+      function _G.toggle_new_terminal()
+        local terms = require("toggleterm.terminal").get_all()
+        vim.cmd((#terms + 1) .. "ToggleTerm")
+      end
+
+      function _G.kill_curr_terminal()
+        local id = vim.b.toggle_number
+        if id then
+          require("toggleterm.terminal").get(id):shutdown()
+        else
+          if vim.bo.buftype == "terminal" then vim.cmd("bdelete!") end
+        end
+      end
+
+      vim.keymap.set({ "n", "t" }, "<C-S-\\>", _G.toggle_new_terminal, { desc = "New terminal" })
+      vim.keymap.set({ "n", "t" }, "<C-|>", _G.toggle_new_terminal, { desc = "New terminal" })
+      vim.keymap.set({ "n", "t" }, "<C-q>", _G.kill_curr_terminal, { desc = "Kill terminal" })
+
       function _G.set_terminal_keymaps()
         local opts = { buffer = 0 }
         vim.keymap.set("t", "<esc>", [[<C-\><C-n>]], opts)
