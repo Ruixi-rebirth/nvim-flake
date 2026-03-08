@@ -5,17 +5,17 @@
     -- Allow moving between lines using arrow keys and h/l when at the start/end of a line
     vim.cmd("set whichwrap+=<,>,[,],h,l")
 
-    local util = require("lspconfig.util")
     local function load_project_nvim_config()
       local function find_project_root(fname)
-        local repo = vim.fs.find(".repo", { path = fname, upward = true })[1]
-        if repo then
-          return vim.fs.dirname(repo)
-        end
-        return util.find_git_ancestor(fname)
+        local root = vim.fs.find({ ".repo", ".git" }, {
+          path = fname,
+          upward = true,
+        })[1]
+        return root and vim.fs.dirname(root) or nil
       end
 
       local current_file = vim.fn.expand("%:p")
+      if current_file == "" or vim.bo.buftype ~= "" then return end
       local project_root = find_project_root(current_file)
 
       if project_root then
@@ -25,7 +25,12 @@
         end
       end
     end
-    load_project_nvim_config()
+
+    -- Trigger project-local config loading only when a file is opened
+    vim.api.nvim_create_autocmd("BufReadPost", {
+      callback = load_project_nvim_config,
+      desc = "Load project-local .nvim.lua config"
+    })
 
     local load_clipboard_config = function()
       if vim.fn.has("wsl") == 1 then

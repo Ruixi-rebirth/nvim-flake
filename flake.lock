@@ -36,22 +36,6 @@
         "type": "github"
       }
     },
-    "copilot-cmp-nvim": {
-      "flake": false,
-      "locked": {
-        "lastModified": 1733947099,
-        "narHash": "sha256-erRL8bY/zuwuCZfttw+avTrFV7pjv2H6v73NzY2bymM=",
-        "owner": "zbirenbaum",
-        "repo": "copilot-cmp",
-        "rev": "15fc12af3d0109fa76b60b5cffa1373697e261d1",
-        "type": "github"
-      },
-      "original": {
-        "owner": "zbirenbaum",
-        "repo": "copilot-cmp",
-        "type": "github"
-      }
-    },
     "fenix": {
       "inputs": {
         "nixpkgs": [
@@ -234,6 +218,22 @@
       "original": {
         "owner": "hercules-ci",
         "repo": "gitignore.nix",
+        "type": "github"
+      }
+    },
+    "lz-n": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1772333894,
+        "narHash": "sha256-BGJ+i3gDtGvtnifCM6A9wV26j0mc4e6l7kOAS+qyRNw=",
+        "owner": "nvim-neorocks",
+        "repo": "lz.n",
+        "rev": "c756ce269ca00739541f601ae47ab269795df428",
+        "type": "github"
+      },
+      "original": {
+        "owner": "nvim-neorocks",
+        "repo": "lz.n",
         "type": "github"
       }
     },
@@ -525,9 +525,9 @@
       "inputs": {
         "avante-nvim": "avante-nvim",
         "blink-cmp": "blink-cmp",
-        "copilot-cmp-nvim": "copilot-cmp-nvim",
         "flake-parts": "flake-parts_2",
         "flake-root": "flake-root",
+        "lz-n": "lz-n",
         "minuet-ai-nvim": "minuet-ai-nvim",
         "neovim-nightly-overlay": "neovim-nightly-overlay",
         "nixd": "nixd",
@@ -536,6 +536,7 @@
         "none-ls-nvim": "none-ls-nvim",
         "nui-nvim": "nui-nvim",
         "pre-commit-hooks": "pre-commit-hooks",
+        "screenkey-nvim": "screenkey-nvim",
         "treefmt-nix": "treefmt-nix_2",
         "vim-translator": "vim-translator"
       }
@@ -554,6 +555,22 @@
         "owner": "rust-lang",
         "ref": "nightly",
         "repo": "rust-analyzer",
+        "type": "github"
+      }
+    },
+    "screenkey-nvim": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1771166047,
+        "narHash": "sha256-PqlzJ9m7lxrOI8YuykYqpTWMUdjjlkhj7J2nM/waz84=",
+        "owner": "NStefan002",
+        "repo": "screenkey.nvim",
+        "rev": "fd321966b41d111eed0488b5a3c2d2f8159e1158",
+        "type": "github"
+      },
+      "original": {
+        "owner": "NStefan002",
+        "repo": "screenkey.nvim",
         "type": "github"
       }
     },
