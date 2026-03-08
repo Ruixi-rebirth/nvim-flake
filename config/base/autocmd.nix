@@ -18,22 +18,30 @@
       command = "%s/\\s\\+$//e";
     }
     {
+      # Auto-change directory to project root
       event = [ "FileType" ];
       pattern = [ "*" ];
       callback = lib.nixvim.mkRaw ''
         function()
-          local util = require("lspconfig.util")
           local path = vim.fn.expand("%:p")
-          local function find_repo_root(startpath)
-            local repo = vim.fs.find('.repo', { path = startpath, upward = true })[1]
-            return repo and vim.fs.dirname(repo) or nil
-          end
-          local root_dir = find_repo_root(path) or util.find_git_ancestor(path)
-          if root_dir then
-            pcall(function() vim.cmd('cd ' .. root_dir) end)
+          -- Skip special buffers
+          if path == "" or vim.bo.buftype ~= "" then return end
+
+          -- Find project markers
+          local root = vim.fs.find({ ".repo", ".git" }, {
+            path = path,
+            upward = true,
+          })[1]
+
+          if root then
+            local root_dir = vim.fs.dirname(root)
+            pcall(vim.api.nvim_set_current_dir, root_dir)
           else
-            local file_dir = vim.fn.expand('%:p:h')
-            pcall(function() vim.cmd('cd ' .. file_dir) end)
+            -- Fallback to the directory of the current file
+            local file_dir = vim.fn.expand("%:p:h")
+            if file_dir and file_dir ~= "" and vim.fn.isdirectory(file_dir) == 1 then
+              pcall(vim.api.nvim_set_current_dir, file_dir)
+            end
           end
         end
       '';

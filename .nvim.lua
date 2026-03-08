@@ -1,14 +1,13 @@
 local nvim_lsp = vim.lsp
 nvim_lsp.enable("nixd")
 nvim_lsp.config.nixd = {
-  cmd = { "nixd" },
   settings = {
     nixd = {
       nixpkgs = {
         expr = 'import (builtins.getFlake ("git+file://" + toString ./.)).inputs.nixpkgs { }',
       },
       formatting = {
-        command = { "nix fmt" },
+        command = { "nixfmt" },
       },
       options = {
         flake_parts = {
