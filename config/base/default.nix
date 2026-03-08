@@ -5,5 +5,6 @@
     ./keymaps.nix
     ./autocmd.nix
     ./extraConfigLua.nix
+    ./fcitx5.nix
   ];
 }
