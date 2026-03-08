@@ -1,6 +1,6 @@
 ## Ruixi-rebirth'nvim
 
-My Neovim configuration uses [nixvim](https://github.com/nix-community/nixvim), with lazy loading handled by the plugin [lazy.nvim](https://github.com/folke/lazy.nvim).
+My Neovim configuration uses [nixvim](https://github.com/nix-community/nixvim), with lazy loading powered by [lz.n](https://github.com/lumen-oss/lz.n) and [lazy.nvim](https://github.com/folke/lazy.nvim).
 
 [![Cachix Cache](https://img.shields.io/badge/cachix-ruixi_rebirth-blue.svg)](https://ruixi-rebirth.cachix.org) ![Build and populate cache](https://github.com/Ruixi-rebirth/nvim-flake/workflows/push_to_cachix/badge.svg)
 
@@ -9,7 +9,7 @@ My Neovim configuration uses [nixvim](https://github.com/nix-community/nixvim), 
 - Temporarily use it in the terminal:
 
 ```console
-nix run "github:Ruixi-rebirth/nvim-flake#lazynvim"
+nix run "github:Ruixi-rebirth/nvim-flake#nvim"
 ```
 
 - Use as a package:
@@ -41,7 +41,7 @@ nix run "github:Ruixi-rebirth/nvim-flake#lazynvim"
 
           # pull specific packages (built against inputs.nixpkgs, usually `nixos-unstable`)
           environment.systemPackages = [
-            inputs.nvim-flake.packages.${system}.lazynvim
+            inputs.nvim-flake.packages.${system}.nvim
           ];
         };
       })];

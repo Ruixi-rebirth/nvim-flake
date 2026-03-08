@@ -8,7 +8,7 @@ nvim_lsp.config.nixd = {
         expr = 'import (builtins.getFlake ("git+file://" + toString ./.)).inputs.nixpkgs { }',
       },
       formatting = {
-        command = { "nix fmt" },
+        command = { "nixfmt" },
       },
       options = {
         flake_parts = {

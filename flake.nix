@@ -14,6 +14,10 @@
     nixd.url = "github:nix-community/nixd";
     pre-commit-hooks.url = "github:cachix/pre-commit-hooks.nix";
     #plugins list
+    lz-n = {
+      url = "github:nvim-neorocks/lz.n";
+      flake = false;
+    };
     avante-nvim = {
       url = "github:yetone/avante.nvim";
       flake = false;
@@ -35,8 +39,8 @@
       url = "github:MunifTanjim/nui.nvim";
       flake = false;
     };
-    copilot-cmp-nvim = {
-      url = "github:zbirenbaum/copilot-cmp";
+    screenkey-nvim = {
+      url = "github:NStefan002/screenkey.nvim";
       flake = false;
     };
   };
@@ -45,6 +49,7 @@
     inputs@{ self, ... }:
     let
       lazy-nvim-config = import ./config/lazy.nix;
+      lz-n-config = import ./config;
     in
     inputs.flake-parts.lib.mkFlake { inherit inputs; } {
       imports = [
@@ -69,6 +74,13 @@
           lazynvim = nixvim'.makeNixvimWithModule {
             inherit pkgs;
             module = lazy-nvim-config;
+            extraSpecialArgs = {
+              inherit inputs;
+            };
+          };
+          nvim = nixvim'.makeNixvimWithModule {
+            inherit pkgs;
+            module = lz-n-config;
             extraSpecialArgs = {
               inherit inputs;
             };
@@ -115,10 +127,15 @@
               name = "";
               nvim = lazynvim;
             };
+            nvim = nixvimLib.check.mkTestDerivationFromNvim {
+              name = "";
+              nvim = nvim;
+            };
           };
           packages = {
             default = lazynvim;
             lazynvim = lazynvim;
+            nvim = nvim;
           };
           formatter = config.treefmt.build.wrapper;
           devShells = {
