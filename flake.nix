@@ -133,7 +133,7 @@
             };
           };
           packages = {
-            default = lazynvim;
+            default = nvim;
             lazynvim = lazynvim;
             nvim = nvim;
           };

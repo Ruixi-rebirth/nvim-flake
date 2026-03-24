@@ -4,7 +4,9 @@
     -- Fcitx5 status auto-switch
     local function setup_fcitx5()
       if vim.fn.executable("fcitx5-remote") ~= 1 then
-        vim.notify("fcitx5-remote not found, fcitx5 auto-switch disabled", vim.log.levels.WARN)
+        if #vim.api.nvim_list_uis() > 0 then
+          vim.notify("fcitx5-remote not found, fcitx5 auto-switch disabled", vim.log.levels.WARN)
+        end
         return
       end
 
