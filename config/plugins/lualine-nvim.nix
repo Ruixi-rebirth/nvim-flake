@@ -24,9 +24,9 @@
             fmt.__raw = ''
               function(str)
                 if str == "" then return str end
-                local limit = math.floor(vim.o.columns / 3)
-                if #str > limit and limit > 3 then
-                  return string.sub(str, 1, limit - 3) .. "..."
+                local limit = math.floor(vim.o.columns / 2)
+                if #str > limit and limit > 2 then
+                  return string.sub(str, 1, limit - 2) .. "..."
                 end
                 return str
               end
@@ -34,6 +34,21 @@
           }
         ];
         lualine_x = [
+          {
+            __unkeyed-1.__raw = ''
+              function()
+                local recording_register = vim.fn.reg_recording()
+                if recording_register == "" then
+                  return ""
+                else
+                  return "⏺  Recording @" .. recording_register
+                end
+              end
+            '';
+            color = {
+              fg = "#ff9e64";
+            };
+          }
           {
             __unkeyed-1 = "get_fcitx5_status()";
             color = {

@@ -35,6 +35,7 @@ let
       "vim-translator"
       "markdown-preview-nvim"
       "codesnap-nvim"
+      "colorizer"
     ];
     git = [
       "gitsigns-nvim"
