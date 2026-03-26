@@ -23,6 +23,11 @@
           vim.g.loaded_netrw = 1
           vim.g.loaded_netrwPlugin = 1
           vim.opt.termguicolors = true
+
+          local lzn = require('lz.n')
+          lzn.trigger_load({
+            'telescope.nvim',
+          })
         end
       '';
       keys = [
@@ -37,15 +42,22 @@
           desc = "Jump to current file's directory";
         }
       ];
-
     };
 
     luaConfig.post = ''
-      -- Telescope integration for searching inside the folder under the cursor
+      -- Telescope integration for searching inside the folder under the cursor or current buffer's directory
       vim.keymap.set("n", "<leader>g", function()
-        local api = require("nvim-tree.api")
-        local node = api.tree.get_node_under_cursor()
-        local path = node and node.absolute_path or vim.loop.cwd()
+        local path
+        if vim.bo.filetype == "NvimTree" then
+          local api = require("nvim-tree.api")
+          local node = api.tree.get_node_under_cursor()
+          path = node and node.absolute_path or vim.loop.cwd()
+        else
+          path = vim.api.nvim_buf_get_name(0)
+          if path == "" then
+            path = vim.loop.cwd()
+          end
+        end
 
         local stat = vim.loop.fs_stat(path)
         if stat and stat.type == "file" then
@@ -55,7 +67,7 @@
         require("telescope.builtin").live_grep({
           search_dirs = { path },
         })
-      end, { desc = "Live grep under current folder from nvim-tree" })
+      end, { desc = "Live grep in current directory" })
     '';
   };
 }

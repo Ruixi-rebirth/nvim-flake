@@ -61,7 +61,7 @@
           desc = "Remote Flash";
         }
         {
-          __unkeyed-1 = "<leader>g";
+          __unkeyed-1 = "<leader>-";
           __unkeyed-2.__raw = "function() require('flash').treesitter_search() end";
           mode = [
             "n"
