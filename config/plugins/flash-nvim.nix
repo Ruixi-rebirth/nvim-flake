@@ -17,6 +17,14 @@
           shade = 5;
         };
       };
+      modes = {
+        char = {
+          jump_labels = true;
+          label = {
+            exclude = "";
+          };
+        };
+      };
       prompt = {
         enabled = true;
         prefix = [
