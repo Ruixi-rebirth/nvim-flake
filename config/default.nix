@@ -39,6 +39,8 @@ let
     git = [
       "gitsigns-nvim"
       "diffview-nvim"
+      "lazygit-nvim"
+      "git-blame"
     ];
     fuzzy_finder = [
       "telescope-nvim"
