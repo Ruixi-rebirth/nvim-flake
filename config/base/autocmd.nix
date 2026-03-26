@@ -6,7 +6,7 @@
       event = [ "BufReadPost" ];
       pattern = [ "*" ];
       command = ''
-        if line("'\"") > 1 && line("'\"") <= line("$") && line(".") == 1 |
+        if line("'\"") > 1 && line("'\"") <= line("$") |
         	exe "normal! g`\""
         endif
       '';
