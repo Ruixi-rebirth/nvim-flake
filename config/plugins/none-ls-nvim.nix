@@ -65,7 +65,7 @@
           "---",
           "Language: Cpp",
           "BasedOnStyle: LLVM",
-          "ColumnLimit: 100",
+          "ColumnLimit: 80",
           "",
           "# Align trailing comments continuously, allowing 1 empty line gap",
           "AlignTrailingComments:",
