@@ -60,23 +60,12 @@
         end
 
         local path = root .. "/.clang-format"
-
         local content = {
           "---",
           "Language: Cpp",
           "BasedOnStyle: LLVM",
+          "Standard: Latest",
           "ColumnLimit: 80",
-          "",
-          "# Align trailing comments continuously, allowing 1 empty line gap",
-          "AlignTrailingComments:",
-          "  Kind: Always",
-          "  OverEmptyLines: 1",
-          "",
-          "# Pointer alignment: int* a instead of int *a",
-          "PointerAlignment: Left",
-          "",
-          "# Allow very short functions on a single line",
-          "AllowShortFunctionsOnASingleLine: Inline",
           "..."
         }
 
