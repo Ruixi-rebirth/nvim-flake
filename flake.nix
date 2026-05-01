@@ -60,6 +60,7 @@
       debug = true;
       systems = [
         "x86_64-linux"
+        "aarch64-linux"
       ];
       perSystem =
         {
@@ -71,13 +72,6 @@
         let
           nixvimLib = inputs.nixvim.lib.${system};
           nixvim' = inputs.nixvim.legacyPackages.${system};
-          lazynvim = nixvim'.makeNixvimWithModule {
-            inherit pkgs;
-            module = lazy-nvim-config;
-            extraSpecialArgs = {
-              inherit inputs;
-            };
-          };
           nvim = nixvim'.makeNixvimWithModule {
             inherit pkgs;
             module = lz-n-config;
@@ -123,10 +117,6 @@
           };
           checks = {
             # Run `nix flake check .` to verify config is not broken
-            default = nixvimLib.check.mkTestDerivationFromNvim {
-              name = "";
-              nvim = lazynvim;
-            };
             nvim = nixvimLib.check.mkTestDerivationFromNvim {
               name = "";
               nvim = nvim;
@@ -134,7 +124,6 @@
           };
           packages = {
             default = nvim;
-            lazynvim = lazynvim;
             nvim = nvim;
           };
           formatter = config.treefmt.build.wrapper;

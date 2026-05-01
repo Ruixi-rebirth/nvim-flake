@@ -9,21 +9,11 @@ let
     src = inputs.minuet-ai-nvim;
     doCheck = false;
   };
-  blink-cmp-fixed =
-    inputs.blink-cmp.packages.${pkgs.stdenv.hostPlatform.system}.blink-cmp.overrideAttrs
-      (old: {
-        postInstall = (old.postInstall or "") + ''
-          mkdir -p $out/lua
-          ln -s ${
-            inputs.blink-cmp.packages.${pkgs.stdenv.hostPlatform.system}.blink-fuzzy-lib
-          }/lib/libblink_cmp_fuzzy.so $out/lua/blink_cmp_fuzzy.so
-        '';
-      });
 in
 {
   plugins.blink-cmp = {
     enable = true;
-    package = blink-cmp-fixed;
+    package = inputs.blink-cmp.packages.${pkgs.stdenv.hostPlatform.system}.blink-cmp;
 
     lazyLoad.settings = {
       before.__raw = ''
@@ -386,9 +376,6 @@ in
 
       fuzzy = {
         implementation = "rust";
-        prebuilt_binaries = {
-          download = false;
-        };
       };
     };
   };
