@@ -43,6 +43,10 @@
       url = "github:NStefan002/screenkey.nvim";
       flake = false;
     };
+    blink-cmp-dictionary = {
+      url = "github:Kaiser-Yang/blink-cmp-dictionary";
+      flake = false;
+    };
   };
 
   outputs =
