@@ -27,9 +27,5 @@
     foldlevel = 99;
     exrc = true; # https://github.com/neovim/nvim-lspconfig/wiki/Project-local-settings#use-exrc
     laststatus = 3;
-    colorcolumn = [
-      "80"
-      "120"
-    ]; # column guide
   };
 }

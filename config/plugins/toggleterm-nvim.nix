@@ -56,10 +56,18 @@
     luaConfig.post = ''
       function runFile()
         local ft = vim.bo.filetype
-        local run_cmd = { go = "go run", rust = "cargo run" }
-        if run_cmd[ft] then
-          vim.cmd("TermExec cmd=" .. '\'clear;echo "Run current file..."; ' .. run_cmd[ft] .. " %' go_back=0")
+        local run_cmd = { go = "go run %", rust = "cargo run", cpp = "cppup run" }
+        local cmd = run_cmd[ft]
+        if not cmd then
+          vim.notify("No run command defined for filetype: " .. ft, vim.log.levels.WARN)
+          return
         end
+        local exe = cmd:match("^(%S+)")
+        if vim.fn.executable(exe) == 0 then
+          vim.notify("Command not found: " .. exe, vim.log.levels.ERROR)
+          return
+        end
+        vim.cmd("TermExec cmd=" .. "'clear;" .. cmd .. "' go_back=0")
       end
 
       vim.keymap.set("n", "<space>r", "<cmd>lua runFile()<CR>", { noremap = true, silent = true, desc = "Run current file" })

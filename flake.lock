@@ -35,6 +35,22 @@
         "type": "github"
       }
     },
+    "blink-cmp-dictionary": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1778508199,
+        "narHash": "sha256-DfUXUKYNnnY0at1ayU/uRRGGGf4bmuuWvQar1XEUa5Q=",
+        "owner": "Kaiser-Yang",
+        "repo": "blink-cmp-dictionary",
+        "rev": "17ea03ba5c296310b9f74587b52fde1b04d84c1a",
+        "type": "github"
+      },
+      "original": {
+        "owner": "Kaiser-Yang",
+        "repo": "blink-cmp-dictionary",
+        "type": "github"
+      }
+    },
     "blink-lib": {
       "inputs": {
         "nixpkgs": [
@@ -471,6 +487,7 @@
       "inputs": {
         "avante-nvim": "avante-nvim",
         "blink-cmp": "blink-cmp",
+        "blink-cmp-dictionary": "blink-cmp-dictionary",
         "flake-parts": "flake-parts",
         "flake-root": "flake-root",
         "lz-n": "lz-n",

@@ -9,8 +9,20 @@ let
     src = inputs.minuet-ai-nvim;
     doCheck = false;
   };
+  blink-cmp-dictionary-pkg = pkgs.vimUtils.buildVimPlugin {
+    name = "blink-cmp-dictionary";
+    src = inputs.blink-cmp-dictionary;
+    doCheck = false;
+  };
 in
 {
+  extraPackages = [ pkgs.wordnet ];
+
+  plugins.blink-cmp-dictionary = {
+    enable = true;
+    package = blink-cmp-dictionary-pkg;
+  };
+
   plugins.blink-cmp = {
     enable = true;
     package = inputs.blink-cmp.packages.${pkgs.stdenv.hostPlatform.system}.blink-cmp;
@@ -248,8 +260,18 @@ in
           "dadbod"
           "minuet"
           "avante"
+          "dictionary"
         ];
         providers = {
+          dictionary = {
+            module = "blink-cmp-dictionary";
+            name = "Dict";
+            min_keyword_length = 3;
+            score_offset = -3;
+            opts = {
+              dictionary_files = [ "${pkgs.scowl}/share/dict/wamerican.60" ];
+            };
+          };
           lsp.score_offset = 5;
           snippets = {
             opts = {
