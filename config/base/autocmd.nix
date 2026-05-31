@@ -57,7 +57,10 @@
     }
     {
       # Hide colorcolumn on narrow windows
-      event = [ "VimResized" "BufEnter" ];
+      event = [
+        "VimResized"
+        "BufEnter"
+      ];
       pattern = [ "*" ];
       callback = lib.nixvim.mkRaw ''
         function()
