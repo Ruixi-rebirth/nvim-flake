@@ -15,6 +15,10 @@
         width = 25;
         side = "left";
       };
+      update_focused_file = {
+        enable = true;
+        update_root = true;
+      };
     };
 
     lazyLoad.settings = {
