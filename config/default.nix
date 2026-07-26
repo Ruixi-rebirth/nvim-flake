@@ -36,6 +36,8 @@ let
       "markdown-preview-nvim"
       "codesnap-nvim"
       "colorizer"
+      "leetcode-nvim"
+      "image-nvim"
     ];
     git = [
       "gitsigns-nvim"
