@@ -5,7 +5,15 @@
   ...
 }:
 let
-  importPlugin = name: import ./plugins/${name}.nix { inherit inputs pkgs lib; };
+  importPlugin =
+    name:
+    let
+      directory = ./plugins/${name};
+      file = ./plugins/${name}.nix;
+    in
+    import (if builtins.pathExists directory then directory else file) {
+      inherit inputs pkgs lib;
+    };
   category = {
     theme = [
       "nord-nvim"
