@@ -52,7 +52,6 @@
   outputs =
     inputs@{ self, ... }:
     let
-      lazy-nvim-config = import ./config/lazy.nix;
       lz-n-config = import ./config;
     in
     inputs.flake-parts.lib.mkFlake { inherit inputs; } {
@@ -109,6 +108,7 @@
             inherit system;
             config = {
               allowBroken = true;
+              allowUnfree = true;
             };
             overlays = [
               # inputs.neovim-nightly-overlay.overlays.default
