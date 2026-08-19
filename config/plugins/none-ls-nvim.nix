@@ -10,7 +10,6 @@
           enable = true;
           disableTsServerFormatter = true;
         };
-        gofumpt.enable = true;
         nixfmt.enable = true;
         shfmt.enable = true;
         stylua = {
@@ -37,12 +36,17 @@
           local filetype = vim.bo[bufnr].filetype
 
           if client:supports_method("textDocument/formatting") and not vim.tbl_contains(exclude_ft, filetype) then
-            local augroup = vim.api.nvim_create_augroup("LspFormatting", { clear = true })
+            local augroup = vim.api.nvim_create_augroup("NoneLsFormatting", { clear = false })
+            vim.api.nvim_clear_autocmds({ group = augroup, buffer = bufnr })
             vim.api.nvim_create_autocmd("BufWritePre", {
               group = augroup,
               buffer = bufnr,
               callback = function()
-                vim.lsp.buf.format({ async = false })
+                vim.lsp.buf.format({
+                  async = false,
+                  bufnr = bufnr,
+                  id = client.id,
+                })
               end,
             })
           end

@@ -75,6 +75,50 @@
         vim.lsp.inlay_hint.enable(not vim.lsp.inlay_hint.is_enabled())
       end
 
+      -- For Go, organize imports and format through the same gopls client.
+      -- For other filetypes, fall back to normal LSP formatting.
+      _G.organize_imports_and_format = function(bufnr)
+        if not bufnr or bufnr == 0 then
+          bufnr = vim.api.nvim_get_current_buf()
+        end
+
+        local gopls_clients = vim.lsp.get_clients({
+          bufnr = bufnr,
+          name = "gopls",
+        })
+        local gopls = gopls_clients[1]
+
+        if gopls then
+          local params = vim.lsp.util.make_range_params(0, gopls.offset_encoding)
+          params.context = {
+            only = { "source.organizeImports" },
+            diagnostics = {},
+          }
+
+          local response = gopls:request_sync(
+            "textDocument/codeAction",
+            params,
+            3000,
+            bufnr
+          )
+
+          for _, action in ipairs((response or {}).result or {}) do
+            if action.edit then
+              vim.lsp.util.apply_workspace_edit(action.edit, gopls.offset_encoding)
+            end
+          end
+
+          vim.lsp.buf.format({
+            async = false,
+            bufnr = bufnr,
+            id = gopls.id,
+          })
+          return
+        end
+
+        vim.lsp.buf.format({ async = false, bufnr = bufnr })
+      end
+
       vim.api.nvim_create_autocmd("FileType", {
         pattern = { "rust", "go", "nix" },
         callback = function()
@@ -151,6 +195,18 @@
           buffer = bufnr,
           callback = function()
             vim.lsp.buf.format({ async = false, id = client.id })
+          end,
+        })
+      end
+
+      if client.name == "gopls" then
+        local augroup = vim.api.nvim_create_augroup("GoplsFormatting", { clear = false })
+        vim.api.nvim_clear_autocmds({ group = augroup, buffer = bufnr })
+        vim.api.nvim_create_autocmd("BufWritePre", {
+          group = augroup,
+          buffer = bufnr,
+          callback = function()
+            _G.organize_imports_and_format(bufnr)
           end,
         })
       end
@@ -251,7 +307,7 @@
         }
         {
           key = "<leader>f";
-          lspBufAction = "format";
+          action.__raw = "function() _G.organize_imports_and_format(0) end";
           mode = [
             "n"
             "v"
