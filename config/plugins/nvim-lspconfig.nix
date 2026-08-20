@@ -75,9 +75,9 @@
         vim.lsp.inlay_hint.enable(not vim.lsp.inlay_hint.is_enabled())
       end
 
-      -- For Go, organize imports and format through the same gopls client.
-      -- For other filetypes, fall back to normal LSP formatting.
-      _G.organize_imports_and_format = function(bufnr)
+      -- Format through gopls without organizing imports. Import changes stay
+      -- explicit through code actions instead of happening on every save.
+      _G.lsp_format = function(bufnr)
         if not bufnr or bufnr == 0 then
           bufnr = vim.api.nvim_get_current_buf()
         end
@@ -87,6 +87,30 @@
           name = "gopls",
         })
         local gopls = gopls_clients[1]
+
+        if gopls then
+          vim.lsp.buf.format({
+            async = false,
+            bufnr = bufnr,
+            id = gopls.id,
+          })
+          return
+        end
+
+        vim.lsp.buf.format({ async = false, bufnr = bufnr })
+      end
+
+      -- Explicit formatting also organizes Go imports. This is intentionally
+      -- separate from the save hook, which only calls lsp_format.
+      _G.organize_imports_and_format = function(bufnr)
+        if not bufnr or bufnr == 0 then
+          bufnr = vim.api.nvim_get_current_buf()
+        end
+
+        local gopls = vim.lsp.get_clients({
+          bufnr = bufnr,
+          name = "gopls",
+        })[1]
 
         if gopls then
           local params = vim.lsp.util.make_range_params(0, gopls.offset_encoding)
@@ -104,19 +128,18 @@
 
           for _, action in ipairs((response or {}).result or {}) do
             if action.edit then
-              vim.lsp.util.apply_workspace_edit(action.edit, gopls.offset_encoding)
+              vim.lsp.util.apply_workspace_edit(
+                action.edit,
+                gopls.offset_encoding
+              )
+            end
+            if action.command then
+              gopls:exec_cmd(action.command, { bufnr = bufnr })
             end
           end
-
-          vim.lsp.buf.format({
-            async = false,
-            bufnr = bufnr,
-            id = gopls.id,
-          })
-          return
         end
 
-        vim.lsp.buf.format({ async = false, bufnr = bufnr })
+        _G.lsp_format(bufnr)
       end
 
       vim.api.nvim_create_autocmd("FileType", {
@@ -206,7 +229,7 @@
           group = augroup,
           buffer = bufnr,
           callback = function()
-            _G.organize_imports_and_format(bufnr)
+            _G.lsp_format(bufnr)
           end,
         })
       end
