@@ -54,7 +54,7 @@
 
       -- show diagnostics when InsertLeave
       vim.api.nvim_create_autocmd("FileType", {
-        pattern = { "go", "rust", "nix", "haskell", "cpp", "c" },
+        pattern = { "go", "rust", "nix", "toml", "haskell", "cpp", "c" },
         callback = function(args)
           vim.api.nvim_create_autocmd("DiagnosticChanged", {
             buffer = args.buf,
@@ -212,7 +212,7 @@
         end,
       })
 
-      local auto_format_servers = { "rust_analyzer", "hls", "mesonlsp" }
+      local auto_format_servers = { "rust_analyzer", "hls", "mesonlsp", "taplo" }
       if vim.tbl_contains(auto_format_servers, client.name) then
         vim.api.nvim_create_autocmd("BufWritePre", {
           buffer = bufnr,
@@ -403,6 +403,10 @@
             };
           };
         };
+      };
+      taplo = {
+        enable = true;
+        packageFallback = true;
       };
       pyright = {
         enable = true;
