@@ -196,9 +196,26 @@
     '';
 
     onAttach = ''
+      local diagnostic_float_group = vim.api.nvim_create_augroup(
+        "LspDiagnosticFloat",
+        { clear = false }
+      )
+      vim.api.nvim_clear_autocmds({
+        group = diagnostic_float_group,
+        buffer = bufnr,
+      })
       vim.api.nvim_create_autocmd("CursorHold", {
+        group = diagnostic_float_group,
         buffer = bufnr,
         callback = function()
+          -- Do not cover hover documentation or another active popup.
+          for _, winid in ipairs(vim.api.nvim_tabpage_list_wins(0)) do
+            local config = vim.api.nvim_win_get_config(winid)
+            if config.relative ~= "" then
+              return
+            end
+          end
+
           local opts = {
             focusable = false,
             close_events = { "BufLeave", "CursorMoved", "InsertEnter", "FocusLost" },

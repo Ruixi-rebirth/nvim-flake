@@ -219,13 +219,21 @@ in
           "fallback"
         ];
         "<S-Tab>" = [
-          "select_prev"
           "snippet_backward"
+          "select_prev"
           "fallback"
         ];
         "<Tab>" = [
-          "select_next"
           "snippet_forward"
+          "select_next"
+          "fallback"
+        ];
+        "<C-n>" = [
+          "select_next"
+          "fallback"
+        ];
+        "<C-p>" = [
+          "select_prev"
           "fallback"
         ];
         "<c-u>" = [
