@@ -225,7 +225,8 @@
             scope = "line",
           }
           vim.diagnostic.show()
-          vim.diagnostic.open_float(nil, opts)
+          local _, diagnostic_win = vim.diagnostic.open_float(nil, opts)
+          vim.b[bufnr].lsp_diagnostic_float_win = diagnostic_win
         end,
       })
 
@@ -291,7 +292,17 @@
         }
         {
           key = "K";
-          lspBufAction = "hover";
+          action.__raw = ''
+            function()
+              local current_buf = vim.api.nvim_get_current_buf()
+              local diagnostic_win = vim.b[current_buf].lsp_diagnostic_float_win
+              if diagnostic_win and vim.api.nvim_win_is_valid(diagnostic_win) then
+                vim.api.nvim_win_close(diagnostic_win, true)
+              end
+              vim.b[current_buf].lsp_diagnostic_float_win = nil
+              vim.lsp.buf.hover()
+            end
+          '';
           options = key_opts // {
             desc = "Hover documentation";
           };
