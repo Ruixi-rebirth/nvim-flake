@@ -25,7 +25,7 @@ in
         {
           __unkeyed-1 = "<leader>d";
           __unkeyed-2 = "<Plug>TranslateWV";
-          mode = [ "v" ];
+          mode = [ "x" ];
           desc = "Display translation in a window";
         }
       ];

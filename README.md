@@ -17,13 +17,14 @@ nix run "github:Ruixi-rebirth/nvim-flake#nvim"
 ```nix
 {
   inputs = {
+    nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
     nvim-flake.url = "github:Ruixi-rebirth/nvim-flake";
   };
 
   outputs = inputs: {
     nixosConfigurations."my-laptop-hostname" =
     let system = "x86_64-linux";
-    in nixpkgs.lib.nixosSystem {
+    in inputs.nixpkgs.lib.nixosSystem {
       inherit system;
       modules = [({pkgs, config, ... }: {
         config = {

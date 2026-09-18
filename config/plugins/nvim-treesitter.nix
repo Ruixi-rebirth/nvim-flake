@@ -33,7 +33,12 @@
          (#match? @_name "(__raw)$")
          (#set! injection.language "lua"))
       ]]
-      vim.treesitter.query.set("nix", "injections", nix_injection_query)
+      local queries = {}
+      for _, path in ipairs(vim.treesitter.query.get_files("nix", "injections")) do
+        table.insert(queries, table.concat(vim.fn.readfile(path), "\n"))
+      end
+      table.insert(queries, nix_injection_query)
+      vim.treesitter.query.set("nix", "injections", table.concat(queries, "\n"))
     '';
   };
 }

@@ -56,7 +56,7 @@
 
     luaConfig.post = ''
       _G.gen_clangformat_config = function()
-        local root = _G.root_dir or vim.fn.getcwd()
+        local root = _G.current_project_root()
 
         if not root then
           vim.notify("Could not determine project root!", vim.log.levels.ERROR)

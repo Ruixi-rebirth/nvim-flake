@@ -25,8 +25,12 @@
               function(str)
                 if str == "" then return str end
                 local limit = math.floor(vim.o.columns / 2)
-                if #str > limit and limit > 2 then
-                  return string.sub(str, 1, limit - 2) .. "..."
+                if vim.fn.strdisplaywidth(str) > limit and limit > 3 then
+                  local text = vim.fn.strcharpart(str, 0, limit - 3)
+                  while vim.fn.strdisplaywidth(text) > limit - 3 do
+                    text = vim.fn.strcharpart(text, 0, vim.fn.strchars(text) - 1)
+                  end
+                  return text .. "..."
                 end
                 return str
               end

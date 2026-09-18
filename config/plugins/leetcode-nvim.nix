@@ -80,21 +80,18 @@
           __raw = ''
             function(question)
               local console = question.console
-              local original_mount = console.mount
-              local original_hide = console.hide
               local original_unmount = console.unmount
 
-              -- The native console hides on BufLeave/WinLeave. A split should
-              -- remain visible while moving between the editor and console.
-              for _, popup in ipairs(console.popups) do
-                popup.handle_leave = function() end
-              end
+              local split_group = vim.api.nvim_create_augroup(
+                "LeetConsoleSplits_" .. console.testcase.bufnr, { clear = true }
+              )
 
               local function close_splits(self)
                 if self._closing_splits then
                   return
                 end
                 self._closing_splits = true
+                vim.api.nvim_clear_autocmds({ group = split_group })
 
                 local current_win = vim.api.nvim_get_current_win()
                 local restore_focus = false
@@ -106,12 +103,13 @@
                 end
 
                 for _, popup in ipairs(self.popups) do
-                  if popup.winid and vim.api.nvim_win_is_valid(popup.winid) then
-                    vim.api.nvim_win_close(popup.winid, true)
-                  end
+                  local win = popup.winid
                   popup.winid = nil
                   popup.renderer.winid = nil
                   popup.visible = false
+                  if win and vim.api.nvim_win_is_valid(win) then
+                    vim.api.nvim_win_close(win, true)
+                  end
                 end
                 self.visible = false
                 self._closing_splits = false
@@ -132,20 +130,32 @@
 
                 self._split_return_win = vim.api.nvim_get_current_win()
 
-                -- Initialize the plugin-owned buffers once, then close the
-                -- floating layout before placing those buffers in splits.
-                if not self._.mounted then
-                  original_mount(self)
-                  original_hide(self)
-
-                  -- Nui keeps BufWinEnter callbacks in its unmount group,
-                  -- while hiding the float removes the hide group those
-                  -- callbacks write to. Recreate it before reusing the
-                  -- buffers in normal windows.
-                  vim.api.nvim_create_augroup(
-                    self._.augroup.hide,
-                    { clear = true }
-                  )
+                -- Constructors already allocate the plugin buffers. Initialize
+                -- them directly: mounting then hiding a float re-enters NUI's
+                -- window callbacks while converting it into a split.
+                if not self._split_initialized then
+                  for _, component in ipairs({ self, self.testcase, self.result }) do
+                    for _, group in pairs(component._.augroup) do
+                      pcall(vim.api.nvim_del_augroup_by_name, group)
+                    end
+                  end
+                  for _, popup in ipairs(self.popups) do
+                    for option, value in pairs(popup._.buf_options) do
+                      vim.bo[popup.bufnr][option] = value
+                    end
+                    popup._.mounted = true
+                    popup:update_renderer()
+                  end
+                  self.testcase:autocmds()
+                  local keys = require("leetcode.config").user.keys
+                  self:set_keymaps({
+                    [keys.toggle] = function() self:hide() end,
+                    [keys.reset_testcases] = function() self.testcase:reset() end,
+                    [keys.use_testcase] = function() self:use_testcase() end,
+                    [keys.focus_testcases] = function() self.testcase:focus() end,
+                    [keys.focus_result] = function() self.result:focus() end,
+                  })
+                  self._split_initialized = true
                 end
 
                 local source_win = question.winid
@@ -177,6 +187,16 @@
                 self.visible = true
 
                 for _, win in ipairs({ testcase_win, result_win }) do
+                  vim.api.nvim_create_autocmd("WinClosed", {
+                    group = split_group,
+                    pattern = tostring(win),
+                    callback = function()
+                      -- Closing one panel closes the pair, outside WinClosed.
+                      vim.schedule(function()
+                        if self.visible then self:hide() end
+                      end)
+                    end,
+                  })
                   vim.wo[win].winfixwidth = false
                   vim.wo[win].winfixheight = false
                   vim.wo[win].winhighlight = "Normal:NormalSB"
@@ -208,6 +228,11 @@
               end
               console.unmount = function(self)
                 close_splits(self)
+                for _, popup in ipairs(self.popups) do
+                  popup._.mounted = true
+                  popup:unmount()
+                end
+                self._split_initialized = false
                 original_unmount(self)
               end
             end
@@ -225,7 +250,7 @@
           local home = vim.fn.expand("~/Codelearning/leetcode")
           vim.fn.mkdir(home, "p")
           if vim.fn.filereadable(home .. "/go.mod") == 0 then
-            vim.fn.system({ "go", "mod", "init", "-C", home, "leetcode" })
+            vim.fn.system({ "go", "-C", home, "mod", "init", "leetcode" })
           end
         end
       '';

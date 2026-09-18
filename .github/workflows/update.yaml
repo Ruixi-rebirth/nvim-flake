@@ -7,6 +7,9 @@ on:
 jobs:
   lockfile:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
     steps:
       - name: Checkout repository
         uses: actions/checkout@v7
@@ -16,6 +19,7 @@ jobs:
           extra_nix_config: |
             access-tokens = github.com=${{ secrets.GITHUB_TOKEN }}
       - name: Update flake.lock
+        id: update
         uses: DeterminateSystems/update-flake-lock@main
         with:
           pr-title: "flake: update the lock" # Title of PR to be created
@@ -24,6 +28,7 @@ jobs:
             automated
           token: ${{ secrets.GITHUB_TOKEN }}
       - uses: peter-evans/enable-pull-request-automerge@v3
+        if: steps.update.outputs.pull-request-number != ''
         with:
-          pull-request-number: ${{ github.event.pull_request.number }}
+          pull-request-number: ${{ steps.update.outputs.pull-request-number }}
           merge-method: squash

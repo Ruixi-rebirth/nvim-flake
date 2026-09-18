@@ -302,8 +302,14 @@ in
             transform_items.__raw = ''
               function(_, items)
                 local CompletionItemKind = require("blink.cmp.types").CompletionItemKind
-                local kind_idx = #CompletionItemKind + 1
-                CompletionItemKind[kind_idx] = "Minuet"
+                local kind_idx
+                for i, name in ipairs(CompletionItemKind) do
+                  if name == "Minuet" then kind_idx = i; break end
+                end
+                if not kind_idx then
+                  kind_idx = #CompletionItemKind + 1
+                  CompletionItemKind[kind_idx] = "Minuet"
+                end
                 for _, item in ipairs(items) do
                   item.kind = kind_idx
                   item.source_name = "Minuet"
@@ -320,8 +326,14 @@ in
             transform_items.__raw = ''
               function(_, items)
                 local CompletionItemKind = require("blink.cmp.types").CompletionItemKind
-                local kind_idx = #CompletionItemKind + 1
-                CompletionItemKind[kind_idx] = "Cmdline"
+                local kind_idx
+                for i, name in ipairs(CompletionItemKind) do
+                  if name == "Cmdline" then kind_idx = i; break end
+                end
+                if not kind_idx then
+                  kind_idx = #CompletionItemKind + 1
+                  CompletionItemKind[kind_idx] = "Cmdline"
+                end
                 for _, item in ipairs(items) do
                   item.kind = kind_idx
                   item.source_name = "Cmdline"
@@ -348,8 +360,14 @@ in
             transform_items.__raw = ''
               function(_, items)
                 local CompletionItemKind = require("blink.cmp.types").CompletionItemKind
-                local kind_idx = #CompletionItemKind + 1
-                CompletionItemKind[kind_idx] = "Copilot"
+                local kind_idx
+                for i, name in ipairs(CompletionItemKind) do
+                  if name == "Copilot" then kind_idx = i; break end
+                end
+                if not kind_idx then
+                  kind_idx = #CompletionItemKind + 1
+                  CompletionItemKind[kind_idx] = "Copilot"
+                end
                 for _, item in ipairs(items) do
                   item.kind = kind_idx
                   item.source_name = "Copilot"
@@ -444,6 +462,9 @@ in
     };
     settings = {
       # you can use deepseek with both openai_fim_compatible or openai_compatible provider
+      # Keep failed API requests (e.g. insufficient balance) from spamming popups.
+      notify = false;
+      blink.enable_auto_complete = true;
       provider = "openai_fim_compatible";
       provider_options = {
         openai_fim_compatible = {

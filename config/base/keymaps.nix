@@ -1,10 +1,13 @@
 {
   globals = {
     mapleader = " ";
+    # The built-in Go ftplugin uses mode-agnostic :noremap for [[, [], ][, ]],
+    # which captures Select mode and blocks literal brackets in snippets.
+    no_go_maps = 1;
   };
   keymaps = [
     {
-      mode = "";
+      mode = "n";
       key = "<Space>";
       action = "<Nop>";
       options.silent = true;
@@ -70,13 +73,13 @@
     }
     # Stay in indent mode
     {
-      mode = "v";
+      mode = "x";
       key = "<";
       action = "<gv";
       options.silent = true;
     }
     {
-      mode = "v";
+      mode = "x";
       key = ">";
       action = ">gv";
       options.silent = true;
@@ -94,21 +97,9 @@
       action = ":move '<-2<CR>gv-gv";
       options.silent = true;
     }
-    {
-      mode = "v";
-      key = "J";
-      action = ":move '>+1<CR>gv-gv";
-      options.silent = true;
-    }
-    {
-      mode = "v";
-      key = "K";
-      action = ":move '<-2<CR>gv-gv";
-      options.silent = true;
-    }
     # Better split screen
     {
-      mode = "";
+      mode = "n";
       key = "s";
       action = "<Nop>";
       options.silent = true;
@@ -253,19 +244,7 @@
       options.silent = true;
     }
     {
-      mode = "i";
-      key = "<C-.>";
-      action = "<ESC>$";
-      options.silent = true;
-    }
-    {
       mode = "x";
-      key = "<C-.>";
-      action = "$";
-      options.silent = true;
-    }
-    {
-      mode = "v";
       key = "<C-.>";
       action = "$";
       options.silent = true;
@@ -289,13 +268,7 @@
       options.silent = true;
     }
     {
-      mode = "v";
-      key = "<C-,>";
-      action = "^";
-      options.silent = true;
-    }
-    {
-      mode = "v";
+      mode = "x";
       key = "p";
       action = "\"_dP";
       options.silent = true;

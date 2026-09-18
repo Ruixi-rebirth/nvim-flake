@@ -6,7 +6,10 @@
       # max_lines = 3;
     };
     lazyLoad.settings = {
-      event = [ "BufRead" ];
+      event = [
+        "BufRead"
+        "BufNewFile"
+      ];
     };
     luaConfig.post = ''
       vim.cmd([[hi TreesitterContextBottom gui=underline guisp='#B38DAC']])

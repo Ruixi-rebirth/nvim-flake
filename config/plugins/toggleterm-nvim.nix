@@ -14,6 +14,7 @@
           end
         end
       '';
+      # NixVim treats this option as a Lua expression, not a quoted string.
       open_mapping = "[[<c-\\>]]";
       hide_numbers = true; # hide the number column in toggleterm buffers
       shade_filetypes = [ ];
@@ -56,7 +57,16 @@
     luaConfig.post = ''
       function runFile()
         local ft = vim.bo.filetype
-        local run_cmd = { go = "go run %", rust = "cargo run", cpp = "cppup run" }
+        local filename = vim.api.nvim_buf_get_name(0)
+        if ft == "go" and filename == "" then
+          vim.notify("Save the Go file before running it", vim.log.levels.WARN)
+          return
+        end
+        local run_cmd = {
+          go = "go run " .. vim.fn.shellescape(filename),
+          rust = "cargo run",
+          cpp = "cppup run",
+        }
         local cmd = run_cmd[ft]
         if not cmd then
           vim.notify("No run command defined for filetype: " .. ft, vim.log.levels.WARN)
@@ -67,14 +77,26 @@
           vim.notify("Command not found: " .. exe, vim.log.levels.ERROR)
           return
         end
-        vim.cmd("TermExec cmd=" .. "'clear;" .. cmd .. "' go_back=0")
+        local start_dir = filename ~= "" and vim.fs.dirname(filename) or vim.fn.getcwd()
+        local markers = {
+          go = { "go.mod", "go.work" },
+          rust = { "Cargo.toml" },
+        }
+        local root = markers[ft] and vim.fs.root(start_dir, markers[ft]) or nil
+        -- Unknown runners (such as cppup) keep the user's current directory.
+        root = root or vim.fn.getcwd()
+        -- The existing terminal may still be in another project's directory.
+        -- Change the shell's actual cwd on every run, not just at creation.
+        require("toggleterm").exec(
+          "clear; cd " .. vim.fn.shellescape(root) .. " && " .. cmd,
+          1, nil, root, nil, nil, false
+        )
       end
 
       vim.keymap.set("n", "<space>r", "<cmd>lua runFile()<CR>", { noremap = true, silent = true, desc = "Run current file" })
 
       function _G.toggle_new_terminal()
-        local terms = require("toggleterm.terminal").get_all()
-        vim.cmd((#terms + 1) .. "ToggleTerm")
+        require("toggleterm.terminal").Terminal:new():toggle()
       end
 
       function _G.kill_curr_terminal()

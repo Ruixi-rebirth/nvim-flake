@@ -7,6 +7,7 @@
     lazyLoad.settings = {
       event = [
         "BufRead"
+        "BufNewFile"
       ];
     };
   };

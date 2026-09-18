@@ -15,7 +15,18 @@
       # Automatically remove trailing whitespace before saving the file
       event = [ "BufWritePre" ];
       pattern = [ "*" ];
-      command = "%s/\\s\\+$//e";
+      callback = lib.nixvim.mkRaw ''
+        function(args)
+          local bo = vim.bo[args.buf]
+          -- Markdown trailing spaces can represent a hard line break.
+          if bo.buftype ~= "" or not bo.modifiable or bo.filetype == "markdown" then return end
+          vim.api.nvim_buf_call(args.buf, function()
+            local view = vim.fn.winsaveview()
+            vim.cmd([[silent keepjumps keeppatterns %s/\s\+$//e]])
+            vim.fn.winrestview(view)
+          end)
+        end
+      '';
     }
     {
       # Auto-change directory to project root (.git fallback)
@@ -59,15 +70,20 @@
       # Hide colorcolumn on narrow windows
       event = [
         "VimResized"
+        "WinResized"
         "BufEnter"
       ];
       pattern = [ "*" ];
       callback = lib.nixvim.mkRaw ''
         function()
-          if vim.o.columns < 120 then
-            vim.opt_local.colorcolumn = {}
-          else
-            vim.opt_local.colorcolumn = { "80", "120" }
+          for _, win in ipairs(vim.api.nvim_tabpage_list_wins(0)) do
+            local buf = vim.api.nvim_win_get_buf(win)
+            if vim.api.nvim_win_get_config(win).relative == ""
+              and vim.bo[buf].buftype == ""
+              and vim.bo[buf].filetype ~= "leetcode.nvim"
+            then
+              vim.wo[win].colorcolumn = vim.api.nvim_win_get_width(win) < 120 and "" or "80,120"
+            end
           end
         end
       '';

@@ -5,7 +5,10 @@
     settings = { };
 
     lazyLoad.settings = {
-      event = [ "BufReadPost" ];
+      event = [
+        "BufReadPost"
+        "BufNewFile"
+      ];
     };
   };
 }

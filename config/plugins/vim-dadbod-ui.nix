@@ -13,6 +13,7 @@
       event = [ "BufRead" ];
       before.__raw = ''
         function()
+           require('lz.n').trigger_load({ 'vim-dadbod' })
            vim.g.db_ui_use_nerd_fonts = 1
         end
       '';

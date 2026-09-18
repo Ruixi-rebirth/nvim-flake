@@ -18,9 +18,8 @@
     luaConfig.post = ''
       vim.diagnostic.config({
         virtual_text = false,
-        signs = true,
         underline = true,
-        update_in_insert = true,
+        update_in_insert = false,
         severity_sort = false,
         signs = {
           text = {
@@ -42,34 +41,12 @@
         local repo = vim.fs.find(".repo", { path = startpath, upward = true })[1]
         return repo and vim.fs.dirname(repo) or nil
       end
-      local filepath = vim.fn.expand("%:p")
-      local root_dir = find_repo_root(filepath) or util_custom.find_git_ancestor(filepath)
-      if not root_dir then
-        if #vim.api.nvim_list_uis() > 0 then
-          -- vim.notify("No .repo or Git root directory found!", vim.log.levels.WARN)
-        end
-      else
-        _G.root_dir = root_dir -- Make it globally accessible for server configs
+      _G.current_project_root = function()
+        local filepath = vim.fn.expand("%:p:h")
+        return find_repo_root(filepath) or util_custom.find_git_ancestor(filepath) or vim.fn.getcwd()
       end
 
-      -- show diagnostics when InsertLeave
-      vim.api.nvim_create_autocmd("FileType", {
-        pattern = { "go", "rust", "nix", "toml", "haskell", "cpp", "c" },
-        callback = function(args)
-          vim.api.nvim_create_autocmd("DiagnosticChanged", {
-            buffer = args.buf,
-            callback = function()
-              vim.diagnostic.hide()
-            end,
-          })
-          vim.api.nvim_create_autocmd({ "InsertLeave", "BufWritePost" }, {
-            buffer = args.buf,
-            callback = function()
-              vim.diagnostic.show()
-            end,
-          })
-        end,
-      })
+      -- update_in_insert=false lets Neovim defer display until InsertLeave.
 
       _G.toggle_inlay_hints = function()
         vim.lsp.inlay_hint.enable(not vim.lsp.inlay_hint.is_enabled())
@@ -97,7 +74,22 @@
           return
         end
 
-        vim.lsp.buf.format({ async = false, bufnr = bufnr })
+        local clients = vim.lsp.get_clients({
+          bufnr = bufnr,
+          method = "textDocument/formatting",
+        })
+        -- Prefer the configured none-ls formatter; never run two formatters.
+        table.sort(clients, function(a, b)
+          if (a.name == "null-ls") ~= (b.name == "null-ls") then
+            return a.name == "null-ls"
+          end
+          return a.id < b.id
+        end)
+        if clients[1] then
+          vim.lsp.buf.format({ async = false, bufnr = bufnr, id = clients[1].id })
+        else
+          vim.notify("No formatter attached to this buffer", vim.log.levels.WARN)
+        end
       end
 
       -- Explicit formatting also organizes Go imports. This is intentionally
@@ -153,7 +145,7 @@
       _G.gen_clangd_config = function()
         -- Reuse existing root_dir logic, find root if not available
         local filepath = vim.fn.expand("%:p")
-        local root = _G.root_dir or find_repo_root(filepath) or util_custom.find_git_ancestor(filepath)
+        local root = _G.current_project_root()
         
         if not root then
           vim.notify("Project root directory (.git or .repo) not found!", vim.log.levels.ERROR)
@@ -188,7 +180,8 @@
         vim.notify("Generated .clangd in " .. root, vim.log.levels.INFO)
         
         -- Restart clangd to apply changes
-        vim.cmd("LspRestart clangd")
+        vim.lsp.enable("clangd", false)
+        vim.lsp.enable("clangd", true)
       end
 
       -- Register command :GenClangdConfig
@@ -211,14 +204,18 @@
           -- Do not cover hover documentation or another active popup.
           for _, winid in ipairs(vim.api.nvim_tabpage_list_wins(0)) do
             local config = vim.api.nvim_win_get_config(winid)
-            if config.relative ~= "" then
+            if config.relative ~= ""
+              and not vim.wo[winid].winhighlight:find("TreesitterContext", 1, true)
+            then
               return
             end
           end
 
           local opts = {
-            focusable = false,
-            close_events = { "BufLeave", "CursorMoved", "InsertEnter", "FocusLost" },
+            -- Do not steal focus when it appears, but allow entering it with
+            -- normal window navigation to select/copy the message.
+            focusable = true,
+            close_events = { "CursorMoved", "InsertEnter", "FocusLost" },
             border = "rounded",
             source = "always",
             prefix = " ",
@@ -232,10 +229,13 @@
 
       local auto_format_servers = { "rust_analyzer", "hls", "mesonlsp", "taplo" }
       if vim.tbl_contains(auto_format_servers, client.name) then
+        local group = vim.api.nvim_create_augroup("LspSaveFormat_" .. client.name, { clear = false })
+        vim.api.nvim_clear_autocmds({ group = group, buffer = bufnr })
         vim.api.nvim_create_autocmd("BufWritePre", {
+          group = group,
           buffer = bufnr,
           callback = function()
-            vim.lsp.buf.format({ async = false, id = client.id })
+            vim.lsp.buf.format({ async = false, bufnr = bufnr, id = client.id })
           end,
         })
       end
@@ -261,9 +261,10 @@
           buffer = true;
         };
       in
-      [
+      (map (mapping: { mode = "n"; } // mapping) [
         {
           key = "gd";
+          mode = "n";
           lspBufAction = "definition";
           options = key_opts // {
             desc = "Go to definition";
@@ -271,6 +272,7 @@
         }
         {
           key = "gD";
+          mode = "n";
           lspBufAction = "declaration";
           options = key_opts // {
             desc = "Go to declaration";
@@ -278,6 +280,7 @@
         }
         {
           key = "gi";
+          mode = "n";
           lspBufAction = "implementation";
           options = key_opts // {
             desc = "Go to implementation";
@@ -285,6 +288,7 @@
         }
         {
           key = "gr";
+          mode = "n";
           lspBufAction = "references";
           options = key_opts // {
             desc = "Find references";
@@ -361,7 +365,7 @@
           action.__raw = "function() _G.organize_imports_and_format(0) end";
           mode = [
             "n"
-            "v"
+            "x"
           ];
           options = key_opts // {
             desc = "Format code";
@@ -388,7 +392,7 @@
             desc = "List LSP clients";
           };
         }
-      ];
+      ]);
     servers = {
       gopls = {
         enable = true;
@@ -488,8 +492,24 @@
       ts_ls = {
         enable = true;
         packageFallback = true;
+        config = {
+          filetypes = [
+            "javascript"
+            "javascriptreact"
+            "typescript"
+            "typescriptreact"
+            "vue"
+          ];
+          init_options.plugins = [
+            {
+              name = "@vue/typescript-plugin";
+              location = "${pkgs.vue-language-server}/lib/language-tools/packages/language-server";
+              languages = [ "vue" ];
+            }
+          ];
+        };
       };
-      volar = {
+      vue_ls = {
         enable = true;
         packageFallback = true;
       };
@@ -514,13 +534,16 @@
         packageFallback = true;
         config = {
           cmd.__raw = ''
-            (function()
+            function(dispatchers, config)
               local function get_compile_commands_dir()
                 local dir = os.getenv("COMPILE_COMMANDS_DIR")
                 if dir and vim.fn.isdirectory(dir) == 1 then
                   return dir
                 end
-                return (_G.root_dir or vim.fn.getcwd()) .. "/build"
+                local build = (config.root_dir or vim.fn.getcwd()) .. "/build"
+                if vim.fn.filereadable(build .. "/compile_commands.json") == 1 then
+                  return build
+                end
               end
 
               local function get_clangd_path()
@@ -542,8 +565,8 @@
                   vim.fn.exepath("gcc"),
                   vim.fn.exepath("g++"),
                   vim.fn.exepath("c++"),
-                  os.getenv("CLANG_PATH"),
-                  os.getenv("CXX"),
+                  os.getenv("CLANG_PATH") or "",
+                  os.getenv("CXX") or "",
                 }
 
                 local valid = {}
@@ -556,17 +579,16 @@
                 end
 
                 if #valid == 0 then
-                  return "${pkgs.clang}/bin/clang,${pkgs.gcc}/bin/gcc,${pkgs.glibc}/bin/c++,${pkgs.glibc}/bin/g++"
+                  return "${pkgs.clang}/bin/clang,${pkgs.clang}/bin/clang++,${pkgs.gcc}/bin/gcc,${pkgs.gcc}/bin/g++"
                 end
 
                 return table.concat(valid, ",")
               end
 
-              return {
+              local cmd = {
                 get_clangd_path(),
                 "--enable-config",
                 "--pch-storage=memory",
-                "--compile-commands-dir=" .. get_compile_commands_dir(),
                 "--background-index",
                 "--clang-tidy",
                 "--log=verbose",
@@ -574,11 +596,20 @@
                 "--header-insertion=iwyu",
                 "--fallback-style=LLVM",
                 "--completion-style=detailed",
-                "--function-arg-placeholders",
+                "--function-arg-placeholders=true",
                 "--pretty",
                 "--query-driver=" .. get_query_drivers(),
               }
-            end)()
+              local compile_commands_dir = get_compile_commands_dir()
+              if compile_commands_dir then
+                table.insert(cmd, "--compile-commands-dir=" .. compile_commands_dir)
+              end
+              return vim.lsp.rpc.start(cmd, dispatchers, {
+                cwd = config.cmd_cwd or config.root_dir,
+                env = config.cmd_env,
+                detached = config.detached,
+              })
+            end
           '';
           capabilities = {
             offsetEncoding = [
